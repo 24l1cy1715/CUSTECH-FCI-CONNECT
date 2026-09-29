@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Ilé",
+    "discover": "Ṣawari",
+    "projects": "Àwọn Iṣẹ́",
+    "roommates": "Alábàágbé",
+    "news": "Iròyìn",
+    "businesses": "Àwọn Okowo",
+    "events": "Àwọn Ètò",
+    "leaderboard": "Àtẹ Asiwaju",
+    "communities": "Àwọn Ẹgbẹ́ & Àwùjọ",
+    "mentorship": "Ìtọ́sọ́nà",
+    "learning": "Ibùdó Ẹ̀kọ́",
+    "project_lab": "Project Lab",
+    "digital_id": "Káàdì Ìdánimọ̀ Digital",
+    "opportunities": "Àwọn Àǹfààní",
+    "opportunity_tracker": "Olutọpa Anfani",
+    "copilot": "FCI Copilot",
+    "achievements": "Àwọn Àṣeyọrí",
+    "portfolio": "Àkójọpọ̀ Iṣẹ́",
+    "dashboard": "Pátákó",
+    "profile": "Profaili",
+    "settings": "Ètò",
+    "admin": "Oludari",
+    "logout": "Wọle Jade",
+    "login": "Wọlé",
+    "register": "Forúkọsílẹ̀"
+  },
+  "hero": {
+    "headline": "SOPỌ. KỌ́. ṢAWARI.",
+    "subheadline": "Agbegbe oni-nọmba kan fun awọn akẹkọ Oluko ti Iṣiro ati Imọ-jinlẹ (FCI) ni CUSTECH.",
+    "cta_explore": "Ṣawari FCI",
+    "cta_join": "Darapọ mọ Agbegbe"
+  },
+  "common": {
+    "loading": "N kojọpọ...",
+    "error": "Nkankan ti ko tọ. Jọwọ gbiyanju lẹẹkansi.",
+    "empty": "Ko si nkankan nibi sibẹ.",
+    "save": "Fipamọ",
+    "cancel": "Fagilee",
+    "delete": "Paarẹ",
+    "edit": "Ṣatunkọ",
+    "submit": "Fi silẹ",
+    "back": "Pada",
+    "read_more": "Ka siwaju",
+    "see_all": "Wo gbogbo rẹ",
+    "not_found": "A ko ri oju-iwe naa",
+    "network_error": "Aṣiṣe nẹtiwọọki. Jọwọ ṣayẹwo asopọ rẹ."
+  },
+  "auth": {
+    "login_title": "Kaabọ pada",
+    "login_subtitle": "Wọle si akọọlẹ FCI Connect rẹ",
+    "register_title": "Darapọ mọ FCI Connect",
+    "register_subtitle": "Ṣẹda akọọlẹ rẹ ki o darapọ mọ agbegbe naa",
+    "email": "Adirẹsi imeeli",
+    "password": "Ọrọ igbaniwọle",
+    "login_btn": "Wọlé",
+    "register_btn": "Ṣẹda akọọlẹ",
+    "google_btn": "Tẹsiwaju pẹlu Google",
+    "forgot_password": "Gbagbe ọrọ igbaniwọle?",
+    "no_account": "Ṣe o ko ni akọọlẹ kan?",
+    "have_account": "Ṣe o ti ni akọọlẹ kan tẹlẹ?",
+    "sign_up": "Forúkọsílẹ̀",
+    "sign_in": "Wọlé"
+  },
+  "copilot": {
+    "title": "FCI Personal Copilot",
+    "subtitle": "Oluranlọwọ AI rẹ fun eto-ẹkọ, ọgbọn ati iṣẹ",
+    "placeholder": "Beere FCI Copilot ohunkohun nipa awọn iṣẹ-ẹkọ, ọgbọn, tabi awọn aye...",
+    "send": "Fi Ifiranṣẹ Ranṣẹ",
+    "suggested_title": "Awọn ibeere ti a daba",
+    "disclaimer": "FCI Copilot jẹ oluranlọwọ AI. Ṣe idaniloju awọn nkan pataki pẹlu oludamọran ẹka rẹ."
+  },
+  "achievements": {
+    "title": "Àwọn Àṣeyọrí & Ọla",
+    "subtitle": "Ṣe afihan awọn baaji ti a fọwọsi, ọlá ile-ẹkọ, ati ipo rẹ",
+    "submit_evidence": "Fi Ẹri Silẹ",
+    "level": "Ipele Ọla",
+    "points": "Awọn Ojuami Ọla",
+    "verified": "Fọwọsi",
+    "pending": "Labẹ Atunyẹwo"
+  }
+}

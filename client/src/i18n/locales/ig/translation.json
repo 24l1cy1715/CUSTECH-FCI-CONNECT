@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Ụlọ",
+    "discover": "Chọpụta",
+    "projects": "Ọrụ Ndị Akwụkwọ",
+    "roommates": "Ndị Bi N'ụlọ",
+    "news": "Akụkọ",
+    "businesses": "Azụmaahịa",
+    "events": "Ihe Omume",
+    "leaderboard": "Tebụl Ndị Isi",
+    "communities": "Otu & Obodo",
+    "mentorship": "Nduzi",
+    "learning": "Ebe Mmụta",
+    "project_lab": "Project Lab",
+    "digital_id": "Kaadị Njirimara Dijitalụ",
+    "opportunities": "Ohere",
+    "opportunity_tracker": "Nsoro Ohere",
+    "copilot": "FCI Copilot",
+    "achievements": "Mmezu",
+    "portfolio": "Ọrụ Nwaakwụkwọ",
+    "dashboard": "Kọmputa Nchịkwa",
+    "profile": "Nkọwapụta",
+    "settings": "Ntọala",
+    "admin": "Nlekọta",
+    "logout": "Pụọ",
+    "login": "Banye",
+    "register": "Debanye Aha"
+  },
+  "hero": {
+    "headline": "JIKỌỌ. WUO. CHỌPỤTA.",
+    "subheadline": "Otu obodo dijitalụ maka ụmụ akwụkwọ Ngalaba Sayensị Kọmputa na Ozi na CUSTECH.",
+    "cta_explore": "Nyochaa FCI",
+    "cta_join": "Sonyere Obodo"
+  },
+  "common": {
+    "loading": "Na-ebudata...",
+    "error": "Ihe mebiri. Biko nwaa ọzọ.",
+    "empty": "Ọ dịghị ihe dị ebe a ugbu a.",
+    "save": "Chekwaa",
+    "cancel": "Kagbuo",
+    "delete": "Hichapụ",
+    "edit": "Dezie",
+    "submit": "Nyefee",
+    "back": "Laghachi",
+    "read_more": "Gụkwuo",
+    "see_all": "Hụ ihe niile",
+    "not_found": "Ahụghị ibe a",
+    "network_error": "Mperi netwọk. Biko lelee njikọ gị."
+  },
+  "auth": {
+    "login_title": "Nnọọ ọzọ",
+    "login_subtitle": "Banye na akaụntụ FCI Connect gị",
+    "register_title": "Sonyere FCI Connect",
+    "register_subtitle": "Mepụta akaụntụ gị ma sonye na obodo anyị",
+    "email": "Adreesị Ozi-e",
+    "password": "Okwuntughe",
+    "login_btn": "Banye",
+    "register_btn": "Mepụta akaụntụ",
+    "google_btn": "Gaa n'ihu na Google",
+    "forgot_password": "Chezọrọ okwuntughe?",
+    "no_account": "Enweghị akaụntụ?",
+    "have_account": "Enweela akaụntụ?",
+    "sign_up": "Debanye aha",
+    "sign_in": "Banye"
+  },
+  "copilot": {
+    "title": "FCI Personal Copilot",
+    "subtitle": "Onye inyeaka AI gị maka agụmakwụkwọ, nka na ọrụ",
+    "placeholder": "Jụọ FCI Copilot ihe ọ bụla gbasara ọmụmụ ihe, nkà, ma ọ bụ ohere...",
+    "send": "Zipu Ozi",
+    "suggested_title": "Ajụjụ ndị a tụrụ aro",
+    "disclaimer": "FCI Copilot bụ onye inyeaka AI. Kwenye ihe ndị dị mkpa n'aka onye ndụmọdụ ngalaba gị."
+  },
+  "achievements": {
+    "title": "Mmezu & Ùgwù",
+    "subtitle": "Hụ baajị ndị enyochara, nkwanye ugwu ụlọ akwụkwọ, na ọkwa gị",
+    "submit_evidence": "Nyefee Ihe Akaebe",
+    "level": "Ọkwa Ùgwù",
+    "points": "Isi Ùgwù",
+    "verified": "Ekwenyere",
+    "pending": "Na-enyocha"
+  }
+}

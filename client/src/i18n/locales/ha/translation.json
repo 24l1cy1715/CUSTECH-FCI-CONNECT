@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Gida",
+    "discover": "Binciko",
+    "projects": "Ayyuka",
+    "roommates": "Abokan Zama",
+    "news": "Labarai",
+    "businesses": "Kasuwanci",
+    "events": "Abubuwan Da Ke Tafe",
+    "leaderboard": "Teburin Jagoranci",
+    "communities": "Ƙungiyoyi & Al'ummomi",
+    "mentorship": "Jagoranci",
+    "learning": "Wurin Koyo",
+    "project_lab": "Project Lab",
+    "digital_id": "Katin Shaida na Dijital",
+    "opportunities": "Dama",
+    "opportunity_tracker": "Bibiyar Dama",
+    "copilot": "FCI Copilot",
+    "achievements": "Nasarori",
+    "portfolio": "Ayyukan Dalibi",
+    "dashboard": "Kwamitin Kulawa",
+    "profile": "Bayanin Martaba",
+    "settings": "Saituna",
+    "admin": "Gudanarwa",
+    "logout": "Fita",
+    "login": "Shiga",
+    "register": "Yi Rajista"
+  },
+  "hero": {
+    "headline": "HADA KAI. GINA. BINCIKO.",
+    "subheadline": "Al'ummar dijital guda daya don daliban Sashen Kwamfuta da Bayanai na CUSTECH.",
+    "cta_explore": "Binciko FCI",
+    "cta_join": "Shiga Al'umma"
+  },
+  "common": {
+    "loading": "Ana lodi...",
+    "error": "Wani abu ya sami matsala. Da fatan za a sake gwadawa.",
+    "empty": "Babu komai a nan tukunna.",
+    "save": "Ajiye",
+    "cancel": "Soke",
+    "delete": "Goge",
+    "edit": "Gyara",
+    "submit": "Aika",
+    "back": "Koma",
+    "read_more": "Kara karantawa",
+    "see_all": "Duba duka",
+    "not_found": "Ba a sami shafin ba",
+    "network_error": "Kuskuren hanyar sadarwa. Da fatan za a duba intanet dinku."
+  },
+  "auth": {
+    "login_title": "Barka da dawowa",
+    "login_subtitle": "Shiga asusunka na FCI Connect",
+    "register_title": "Shiga FCI Connect",
+    "register_subtitle": "Kirkiri asusunka ka shiga al'umma",
+    "email": "Adireshin Imel",
+    "password": "Kalmar Sirri",
+    "login_btn": "Shiga",
+    "register_btn": "Kirkiri Asusu",
+    "google_btn": "Ci gaba da Google",
+    "forgot_password": "Ka manta kalmar sirri?",
+    "no_account": "Ba ka da asusu?",
+    "have_account": "Kana da asusu tuni?",
+    "sign_up": "Yi rajista",
+    "sign_in": "Shiga"
+  },
+  "copilot": {
+    "title": "FCI Personal Copilot",
+    "subtitle": "Mataimakin AI don ilimi, kwarewa da sana'a",
+    "placeholder": "Tambayi FCI Copilot komai game da darussa, kwarewa, ko dama...",
+    "send": "Aika Sako",
+    "suggested_title": "Tambayoyi da aka ba da shawara",
+    "disclaimer": "FCI Copilot mataimakin AI ne. Tabbatar da mahimman bayanai tare da mai ba ku shawara na sashe."
+  },
+  "achievements": {
+    "title": "Nasarori & Martaba",
+    "subtitle": "Kalli lambobin yabo da aka tabbatar, darajar makaranta, da matsayinka",
+    "submit_evidence": "Aika Hujja",
+    "level": "Matakin Martaba",
+    "points": "Maki na Martaba",
+    "verified": "Tabbace",
+    "pending": "Ana Bita"
+  }
+}

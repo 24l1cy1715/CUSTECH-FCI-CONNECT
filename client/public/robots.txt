@@ -1,0 +1,36 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /projects
+Allow: /discover
+Allow: /communities
+Allow: /learning
+Allow: /opportunities
+Allow: /news
+Allow: /businesses
+Allow: /events
+Allow: /leaderboard
+Allow: /research
+Allow: /marketplace
+Allow: /announcements
+Allow: /campus
+Allow: /achievements
+
+# Disallow private user spaces and administrative panels
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /super-admin
+Disallow: /super-admin/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /my-fci
+Disallow: /my-fci/*
+Disallow: /settings
+Disallow: /settings/*
+Disallow: /copilot
+Disallow: /copilot/*
+Disallow: /digital-id
+Disallow: /project-lab/*
+Disallow: /siwes/*
+Disallow: /api/
+Disallow: /api/*

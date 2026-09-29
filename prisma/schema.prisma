@@ -1,0 +1,2779 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// CUSTECH FCI CONNECT — Prisma Schema (MySQL 8+)
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../server/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ── ENUMS ─────────────────────────────────────────────────────────────────────
+
+enum RoleName {
+  STUDENT
+  BUSINESS_OWNER
+  EDITOR
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Department {
+  COMPUTER_SCIENCE
+  INFORMATION_TECHNOLOGY
+  CYBER_SECURITY
+  SOFTWARE_ENGINEERING
+  DATA_SCIENCE
+  COMPUTER_ENGINEERING
+  INFORMATION_SYSTEMS
+  LIBRARY_INFORMATION_SCIENCE
+}
+
+enum Level {
+  LEVEL_100
+  LEVEL_200
+  LEVEL_300
+  LEVEL_400
+  LEVEL_500
+  PGD
+  MSC
+  PHD
+}
+
+enum ProjectCategory {
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  CYBERSECURITY
+  ARTIFICIAL_INTELLIGENCE
+  MACHINE_LEARNING
+  DATA_SCIENCE
+  NETWORKING
+  CLOUD_COMPUTING
+  UI_UX
+  SOFTWARE_ENGINEERING
+  HARDWARE
+  IOT
+  OTHER
+}
+
+enum ProjectStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NewsStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BusinessCategory {
+  SOFTWARE
+  GRAPHICS_DESIGN
+  CYBERSECURITY
+  NETWORKING
+  HARDWARE
+  PRINTING
+  DIGITAL_MARKETING
+  WEB_DEVELOPMENT
+  PHOTOGRAPHY
+  TECH_TRAINING
+  IT_SUPPORT
+  OTHER
+}
+
+enum BusinessStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum RoomType {
+  SINGLE
+  SHARED
+  SELF_CONTAIN
+  FLAT
+}
+
+enum ListingStatus {
+  ACTIVE
+  FILLED
+  SUSPENDED
+}
+
+enum ContactPreference {
+  PLATFORM
+  PHONE
+  EMAIL
+}
+
+enum EventType {
+  HACKATHON
+  SEMINAR
+  WORKSHOP
+  COMPETITION
+  CONFERENCE
+  STUDENT_MEETING
+  FACULTY_EVENT
+  TECH_EVENT
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum ConnectionRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum CommentEntityType {
+  PROJECT
+  NEWS
+}
+
+enum NotificationType {
+  CONNECTION_REQUEST
+  CONNECTION_ACCEPTED
+  PROJECT_LIKED
+  PROJECT_COMMENTED
+  MENTIONED
+  EVENT_REMINDER
+  NEWS_UPDATE
+  BUSINESS_APPROVED
+  PROJECT_APPROVED
+  ACHIEVEMENT_UNLOCKED
+  ADMIN_ANNOUNCEMENT
+  REPORT_RESOLVED
+  TEAM_INVITATION
+  TEAM_INVITATION_ACCEPTED
+  TEAM_INVITATION_DECLINED
+  OPPORTUNITY_DEADLINE
+  OPPORTUNITY_UPDATE
+  PORTFOLIO_CONNECT_REQUEST
+  MENTORSHIP_REQUEST_RECEIVED
+  MENTORSHIP_ACCEPTED
+  MENTORSHIP_DECLINED
+  COMMUNITY_INVITATION
+  COMMUNITY_ANNOUNCEMENT
+  COMMUNITY_MODERATION
+  DIGITAL_ID_APPROVED
+  DIGITAL_ID_SUSPENDED
+  DIGITAL_ID_REVOKED
+  LEARNING_PATH_COMPLETED
+  RESOURCE_APPROVED
+  RESOURCE_REJECTED
+  PROJECT_LAB_INVITATION
+  PROJECT_LAB_TASK_ASSIGNED
+  PROJECT_LAB_MILESTONE_COMPLETED
+  OPPORTUNITY_TRACKER_DEADLINE
+  OPPORTUNITY_TRACKER_STATUS
+  RESEARCH_INVITATION
+  RESEARCH_MENTOR_RESPONSE
+  SIWES_DEADLINE
+  SIWES_LOG_APPROVED
+  ASSESSMENT_RESULT
+  GITHUB_CONNECTED
+  MARKETPLACE_INQUIRY
+  POLL_CLOSING
+  ANNOUNCEMENT_URGENT
+  INTELLIGENCE_RECOMMENDATION
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  FCI_ONLY
+  PRIVATE
+}
+
+enum OpportunityCategory {
+  INTERNSHIP
+  JOB
+  HACKATHON
+  COMPETITION
+  SCHOLARSHIP
+  FELLOWSHIP
+  CERTIFICATION
+  WORKSHOP
+  VOLUNTEERING
+  FREELANCE
+  OTHER
+}
+
+enum OpportunityStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum SkillProficiency {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum SkillCategory {
+  PROGRAMMING
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  CYBERSECURITY
+  NETWORKING
+  CLOUD
+  AI_MACHINE_LEARNING
+  DATA_SCIENCE
+  DATABASE
+  UI_UX
+  GRAPHIC_DESIGN
+  DEVOPS
+  HARDWARE
+  LEADERSHIP
+  COMMUNICATION
+  ENTREPRENEURSHIP
+  OTHER
+}
+
+enum TeamInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+}
+
+enum SkillRequirementPriority {
+  REQUIRED
+  PREFERRED
+}
+
+enum ReportEntityType {
+  USER
+  PROJECT
+  COMMENT
+  BUSINESS
+  ROOMMATE_LISTING
+  OPPORTUNITY
+  COMMUNITY
+  COMMUNITY_POST
+  MENTORSHIP
+  LEARNING_RESOURCE
+  LAB_PROJECT
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  FRAUD
+  INAPPROPRIATE
+  MISLEADING
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+enum SavedEntityType {
+  PROJECT
+  NEWS
+  BUSINESS
+  EVENT
+  ROOMMATE_LISTING
+  OPPORTUNITY
+  COMMUNITY
+  LEARNING_RESOURCE
+  LAB_PROJECT
+}
+
+enum AchievementCategory {
+  ACADEMIC
+  TECHNICAL
+  COMMUNITY
+  CAREER
+  FCI_CONNECT
+}
+
+enum AchievementVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// ── PHASE 4 ENUMS ─────────────────────────────────────────────────────────────
+
+enum CampusLocationCategory {
+  FACULTY
+  DEPARTMENT
+  LECTURE_HALL
+  LABORATORY
+  ICT
+  ADMINISTRATION
+  LIBRARY
+  STUDENT_SERVICE
+  EVENT_LOCATION
+  CAFETERIA
+  SPORTS
+  HOSTEL
+  MEDICAL
+  SECURITY
+  OTHER
+}
+
+enum ActivityVisibility {
+  PUBLIC
+  FCI_ONLY
+  PRIVATE
+}
+
+enum ActivityType {
+  PROJECT_PUBLISHED
+  ACHIEVEMENT_EARNED
+  OPPORTUNITY_POSTED
+  EVENT_CREATED
+  EVENT_REGISTERED
+  NEWS_PUBLISHED
+  ANNOUNCEMENT_CREATED
+  PROFILE_MILESTONE
+  BUSINESS_DIRECTORY_UPDATE
+  COMMUNITY_POST
+  COMMUNITY_CREATED
+  LAB_PROJECT_CREATED
+  LAB_PROJECT_COMPLETED
+  RESEARCH_PUBLISHED
+  SKILL_ASSESSMENT_PASSED
+  SIWES_COMPLETED
+  MARKETPLACE_SERVICE_POSTED
+  VOICE_POLL_CREATED
+}
+
+// ── PHASE 5 ENUMS ─────────────────────────────────────────────────────────────
+
+enum CommunityCategory {
+  CYBERSECURITY
+  SOFTWARE_ENGINEERING
+  AI_ML
+  DATA_SCIENCE
+  NETWORKING
+  UI_UX
+  GRAPHICS
+  ROBOTICS
+  ENTREPRENEURSHIP
+  OPEN_SOURCE
+  ACADEMIC
+  OTHER
+}
+
+enum CommunityVisibility {
+  PUBLIC
+  FCI_ONLY
+  PRIVATE
+}
+
+enum CommunityStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum CommunityMemberRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum CommunityMembershipStatus {
+  ACTIVE
+  PENDING
+  BANNED
+  LEFT
+}
+
+enum CommunityResourceType {
+  ARTICLE
+  VIDEO
+  COURSE
+  DOCUMENTATION
+  PROJECT
+  BOOK
+  OTHER
+}
+
+enum MentorshipSessionFormat {
+  CHAT
+  VIDEO
+  IN_PERSON
+  MIXED
+}
+
+enum MentorshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  ENDED
+}
+
+enum MentorshipGoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum MentorshipSessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+// ── PHASE 6 ENUMS ─────────────────────────────────────────────────────────────
+
+enum LearningResourceType {
+  LECTURE_NOTE
+  PDF
+  PAST_QUESTION
+  VIDEO
+  ARTICLE
+  TUTORIAL
+  COURSE
+  BOOK
+  DOCUMENTATION
+  CODE_REPOSITORY
+  PROJECT
+  SLIDE
+  CHEATSHEET
+  OTHER
+}
+
+enum LearningResourceCategory {
+  CYBERSECURITY
+  SOFTWARE_ENGINEERING
+  ARTIFICIAL_INTELLIGENCE
+  DATA_SCIENCE
+  NETWORKING
+  DATABASE_SYSTEMS
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  UI_UX
+  GRAPHIC_DESIGN
+  PROGRAMMING
+  COMPUTER_SCIENCE
+  ACADEMIC
+  CAREER
+  OTHER
+}
+
+enum ResourceSubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LearningProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum LearningPathDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum DigitalIdStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+  REVOKED
+}
+
+// ── PHASE 7 ENUMS ─────────────────────────────────────────────────────────────
+
+enum LabProjectVisibility {
+  PUBLIC
+  FCI_ONLY
+  PRIVATE
+}
+
+enum LabProjectStatus {
+  IDEA
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  ARCHIVED
+}
+
+enum LabTeamRole {
+  PROJECT_LEAD
+  DEVELOPER
+  DESIGNER
+  CYBERSECURITY
+  RESEARCHER
+  DATA_SCIENTIST
+  DOCUMENTATION
+  QA_TESTER
+  OTHER
+}
+
+enum LabMemberStatus {
+  INVITED
+  ACTIVE
+  DECLINED
+}
+
+enum LabTaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum LabTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum LabMilestoneStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum OpportunityTrackStatus {
+  SAVED
+  INTERESTED
+  APPLYING
+  APPLIED
+  SHORTLISTED
+  ACCEPTED
+  NOT_SELECTED
+  WITHDRAWN
+}
+
+// ── PHASE 8 ENUMS ─────────────────────────────────────────────────────────────
+
+enum ResearchStatus {
+  IDEA
+  PROPOSAL
+  PLANNING
+  IN_PROGRESS
+  UNDER_REVIEW
+  COMPLETED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ResearchVisibility {
+  PUBLIC
+  FCI_ONLY
+  PRIVATE
+}
+
+enum ResearchMemberRole {
+  LEAD
+  RESEARCHER
+  DEVELOPER
+  DATA_ANALYST
+  WRITER
+  DESIGNER
+  ASSISTANT
+  OTHER
+}
+
+enum SiwesStatus {
+  NOT_STARTED
+  SEARCHING
+  APPLIED
+  INTERVIEW
+  OFFER_RECEIVED
+  PLACED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum SiwesLogStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+}
+
+enum SiwesDocType {
+  ACCEPTANCE_LETTER
+  PLACEMENT_LETTER
+  CV
+  LOGBOOK
+  REPORT
+  EVALUATION
+  OTHER
+}
+
+// ── PHASE 9 ENUMS ─────────────────────────────────────────────────────────────
+
+enum AssessmentDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum AssessmentQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  CODE_OUTPUT
+  SCENARIO
+}
+
+enum AssessmentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ── PHASE 10 ENUMS ────────────────────────────────────────────────────────────
+
+enum ServicePricingType {
+  FIXED
+  HOURLY
+  NEGOTIABLE
+  CONTACT_FOR_PRICE
+}
+
+enum ServiceStatus {
+  ACTIVE
+  PAUSED
+  DRAFT
+  ARCHIVED
+}
+
+enum InquiryStatus {
+  NEW
+  IN_DISCUSSION
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  CANCELLED
+}
+
+enum VoicePollStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum VoiceSuggestionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  PLANNED
+  IN_PROGRESS
+  RESOLVED
+  DECLINED
+}
+
+// ── PHASE 11 ENUMS ────────────────────────────────────────────────────────────
+
+enum AnnouncementPriority {
+  NORMAL
+  IMPORTANT
+  URGENT
+}
+
+enum AnnouncementCategory {
+  ACADEMIC
+  FACULTY
+  EXAMINATION
+  REGISTRATION
+  EVENT
+  INTERNSHIP
+  COMPETITION
+  SYSTEM
+  EMERGENCY
+  GENERAL
+}
+
+enum AnnouncementAudience {
+  ALL
+  FCI_ONLY
+  DEPARTMENT
+  LEVEL
+  ROLE
+  CUSTOM
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ── MODELS ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  email         String    @unique @db.VarChar(255)
+  passwordHash  String?   @map("password_hash") @db.VarChar(255)
+  googleId      String?   @unique @map("google_id") @db.VarChar(255)
+  emailVerified Boolean   @default(false) @map("email_verified")
+  verifyToken   String?   @map("verify_token") @db.VarChar(255)
+  resetToken    String?   @map("reset_token") @db.VarChar(255)
+  resetExpires  DateTime? @map("reset_expires")
+  isActive      Boolean   @default(true) @map("is_active")
+  isSuspended   Boolean   @default(false) @map("is_suspended")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  profile              Profile?
+  userRoles            UserRole[]
+  projects             Project[]
+  newsArticles         NewsArticle[]
+  businesses           Business[]
+  roommateListing      RoommateListing[]
+  organizedEvents      Event[]               @relation("EventOrganizer")
+  eventRegistrations   EventRegistration[]
+  comments             Comment[]
+  projectLikes         ProjectLike[]
+  notifications        Notification[]
+  reportsFiled         Report[]              @relation("ReporterUser")
+  reportsResolved      Report[]              @relation("ResolverUser")
+  savedItems           SavedItem[]
+  auditLogs            AuditLog[]
+  leaderboardPoints    LeaderboardPoint[]
+  userAchievements     UserAchievement[]     @relation("UserAchievements")
+  verifiedAchievements UserAchievement[]     @relation("VerifiedAchievements")
+  reputationEvents     ReputationEvent[]
+  copilotConversations CopilotConversation[]
+  copilotUsage         CopilotUsage[]
+  copilotFeedback      CopilotFeedback[]
+  connectionsSent      ConnectionRequest[]   @relation("SenderUser")
+  connectionsReceived  ConnectionRequest[]   @relation("ReceiverUser")
+  connectionsAsA       Connection[]          @relation("UserA")
+  connectionsAsB       Connection[]          @relation("UserB")
+  savedRoommates       SavedRoommate[]
+  announcements        Announcement[]
+  studentSkills        StudentSkill[]
+  sentInvitations      TeamInvitation[]      @relation("SentInvitations")
+  receivedInvitations  TeamInvitation[]      @relation("ReceivedInvitations")
+  projectTeams         ProjectTeam[]         @relation("TeamCreator")
+  teamMemberships      ProjectTeamMember[]
+  createdOpportunities Opportunity[]         @relation("CreatedOpportunities")
+  savedOpportunities   SavedOpportunity[]
+  opportunityReports   OpportunityReport[]
+  activityFeed         ActivityFeed[]
+
+  // Phase 5: Student Clubs & Communities & Mentorship
+  ownedCommunities          Community[]             @relation("CommunityOwner")
+  communityMemberships      CommunityMembership[]
+  communityPosts            CommunityPost[]
+  communityComments         CommunityPostComment[]
+  communityLikes            CommunityPostLike[]
+  communityResources        CommunityResource[]
+  mentorProfile             MentorProfile?
+  mentorMentorships         Mentorship[]            @relation("MentorMentorships")
+  menteeMentorships         Mentorship[]            @relation("MenteeMentorships")
+  sharedMentorshipResources MentorshipResource[]
+
+  // Phase 6: Smart Study & Learning Hub & Digital FCI ID
+  uploadedLearningResources LearningResource[]         @relation("AuthorLearningResources")
+  learningResourceProgress  LearningResourceProgress[]
+  learningPathEnrollments   LearningPathEnrollment[]
+  digitalIdentity           DigitalIdentity?           @relation("UserDigitalIdentity")
+  verifiedDigitalIdentities DigitalIdentity[]          @relation("VerifierDigitalIdentity")
+
+  // Phase 7: FCI Project Lab & Advanced Opportunity Tracker
+  createdLabProjects        LabProject[]               @relation("CreatedLabProjects")
+  mentoredLabProjects       LabProject[]               @relation("MentoredLabProjects")
+  labProjectMemberships     LabProjectMember[]
+  assignedLabTasks          LabProjectTask[]           @relation("AssignedLabTasks")
+  createdLabTasks           LabProjectTask[]           @relation("CreatedLabTasks")
+  labDiscussions            LabProjectDiscussion[]
+  addedLabResources         LabProjectResource[]
+  opportunityApplications   OpportunityApplication[]
+
+  // Phase 8: Research & Innovation & SIWES / Internships
+  ownedResearchProjects     ResearchProject[]          @relation("OwnedResearchProjects")
+  mentoredResearchProjects  ResearchProject[]          @relation("MentoredResearchProjects")
+  researchMemberships       ResearchMember[]
+  researchIdeas             ResearchIdea[]
+  researchIdeaLikes         ResearchIdeaLike[]
+  researchIdeaComments      ResearchIdeaComment[]
+  studentPlacements         SiwesPlacement[]           @relation("StudentPlacements")
+  supervisedPlacements      SiwesPlacement[]           @relation("AcademicSupervisorPlacements")
+
+  // Phase 9: GitHub & Skill Assessment Center
+  githubProfile             UserGithubProfile?
+  assessmentAttempts        AssessmentAttempt[]
+
+  // Phase 10: Marketplace & Student Voice
+  marketplaceServices       MarketplaceService[]
+  marketplaceInquiries      MarketplaceInquiry[]
+  voicePolls                VoicePoll[]
+  voicePollVotes            VoicePollVote[]
+  voiceSuggestions          VoiceSuggestion[]
+  voiceSuggestionVotes      VoiceSuggestionVote[]
+
+  // Phase 11: Announcements
+  announcementReads         AnnouncementRead[]
+
+  // Password Reset & Security OTPs
+  passwordResetOtps         PasswordResetOtp[]
+
+  @@map("users")
+}
+
+model Profile {
+  id           String      @id @default(uuid()) @db.VarChar(36)
+  userId       String      @unique @map("user_id") @db.VarChar(36)
+  username     String      @unique @db.VarChar(50)
+  fullName     String      @map("full_name") @db.VarChar(100)
+  matricId     String?     @unique @map("matric_id") @db.VarChar(50)
+  department   Department?
+  level        Level?
+  avatarUrl    String?     @map("avatar_url") @db.VarChar(500)
+  bio          String?     @db.Text
+  githubUrl    String?     @map("github_url") @db.VarChar(500)
+  linkedinUrl  String?     @map("linkedin_url") @db.VarChar(500)
+  portfolioUrl String?           @map("portfolio_url") @db.VarChar(500)
+  headline     String?           @db.VarChar(255)
+  location     String?           @db.VarChar(100)
+  portfolioBio String?           @map("portfolio_bio") @db.Text
+  visibility   ProfileVisibility @default(PUBLIC)
+  portfolioViewsCount Int          @default(0) @map("portfolio_views_count")
+  customSections Json?           @map("custom_sections")
+  skills       Json?             // string[]
+  interests    Json?       // string[]
+  communityPoints Int      @default(0) @map("community_points")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Role {
+  id   String   @id @default(uuid()) @db.VarChar(36)
+  name RoleName @unique
+
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id   String @id @default(uuid()) @db.VarChar(36)
+  name String @unique @db.VarChar(100) // e.g. "projects:create"
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @map("user_id") @db.VarChar(36)
+  roleId String @map("role_id") @db.VarChar(36)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.VarChar(36)
+  permissionId String @map("permission_id") @db.VarChar(36)
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Connection {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  userAId   String   @map("user_a_id") @db.VarChar(36)
+  userBId   String   @map("user_b_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userA User @relation("UserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("UserB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
+  @@map("connections")
+}
+
+model ConnectionRequest {
+  id         String                  @id @default(uuid()) @db.VarChar(36)
+  senderId   String                  @map("sender_id") @db.VarChar(36)
+  receiverId String                  @map("receiver_id") @db.VarChar(36)
+  status     ConnectionRequestStatus @default(PENDING)
+  createdAt  DateTime                @default(now()) @map("created_at")
+  updatedAt  DateTime                @updatedAt @map("updated_at")
+
+  sender   User @relation("SenderUser", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceiverUser", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@map("connection_requests")
+}
+
+model Technology {
+  id   String @id @default(uuid()) @db.VarChar(36)
+  name String @unique @db.VarChar(100)
+
+  projectTechnologies ProjectTechnology[]
+
+  @@map("technologies")
+}
+
+model Project {
+  id          String          @id @default(uuid()) @db.VarChar(36)
+  slug        String          @unique @db.VarChar(255)
+  title       String          @db.VarChar(255)
+  description String?         @db.Text
+  category    ProjectCategory
+  githubUrl   String?         @map("github_url") @db.VarChar(500)
+  demoUrl     String?         @map("demo_url") @db.VarChar(500)
+  authorId    String          @map("author_id") @db.VarChar(36)
+  status      ProjectStatus   @default(PENDING)
+  views       Int             @default(0)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  author               User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  images               ProjectImage[]
+  projectTechnologies  ProjectTechnology[]
+  likes                ProjectLike[]
+  comments             Comment[]
+  skills               ProjectSkill[]
+  projectTeam          ProjectTeam?
+  teamInvitations      TeamInvitation[]
+  communityId          String?             @map("community_id") @db.VarChar(36)
+  community            Community?          @relation(fields: [communityId], references: [id], onDelete: SetNull)
+  labProject           LabProject?         @relation("LabShowcaseProject")
+
+  @@index([authorId])
+  @@index([status])
+  @@index([category])
+  @@index([communityId])
+  @@map("projects")
+}
+
+model ProjectImage {
+  id         String @id @default(uuid()) @db.VarChar(36)
+  projectId  String @map("project_id") @db.VarChar(36)
+  url        String @db.VarChar(500)
+  orderIndex Int    @default(0) @map("order_index")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_images")
+}
+
+model ProjectTechnology {
+  projectId    String @map("project_id") @db.VarChar(36)
+  technologyId String @map("technology_id") @db.VarChar(36)
+
+  project    Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, technologyId])
+  @@map("project_technologies")
+}
+
+model ProjectLike {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  projectId String   @map("project_id") @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_likes")
+}
+
+model Comment {
+  id         String            @id @default(uuid()) @db.VarChar(36)
+  authorId   String            @map("author_id") @db.VarChar(36)
+  entityType CommentEntityType @map("entity_type")
+  entityId   String            @map("entity_id") @db.VarChar(36)
+  content    String            @db.Text
+  isHidden   Boolean           @default(false) @map("is_hidden")
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+
+  author  User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [entityId], references: [id], onDelete: Cascade, map: "fk_comment_project")
+
+  @@index([entityType, entityId])
+  @@map("comments")
+}
+
+model NewsCategory {
+  id   String @id @default(uuid()) @db.VarChar(36)
+  name String @unique @db.VarChar(100)
+  slug String @unique @db.VarChar(100)
+
+  articles NewsArticle[]
+
+  @@map("news_categories")
+}
+
+model NewsTag {
+  id   String @id @default(uuid()) @db.VarChar(36)
+  name String @unique @db.VarChar(100)
+  slug String @unique @db.VarChar(100)
+
+  articleTags ArticleTag[]
+
+  @@map("news_tags")
+}
+
+model NewsArticle {
+  id          String     @id @default(uuid()) @db.VarChar(36)
+  slug        String     @unique @db.VarChar(255)
+  title       String     @db.VarChar(255)
+  excerpt     String?    @db.Text
+  content     String?    @db.LongText
+  coverImage  String?    @map("cover_image") @db.VarChar(500)
+  categoryId  String?    @map("category_id") @db.VarChar(36)
+  authorId    String     @map("author_id") @db.VarChar(36)
+  status      NewsStatus @default(DRAFT)
+  isFeatured  Boolean    @default(false) @map("is_featured")
+  readingTime Int        @default(0) @map("reading_time")
+  views       Int        @default(0)
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  category    NewsCategory? @relation(fields: [categoryId], references: [id])
+  author      User          @relation(fields: [authorId], references: [id])
+  articleTags ArticleTag[]
+
+  @@index([slug])
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@map("news_articles")
+}
+
+model ArticleTag {
+  articleId String @map("article_id") @db.VarChar(36)
+  tagId     String @map("tag_id") @db.VarChar(36)
+
+  article NewsArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     NewsTag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+model RoommateListing {
+  id                String            @id @default(uuid()) @db.VarChar(36)
+  ownerId           String            @map("owner_id") @db.VarChar(36)
+  title             String            @db.VarChar(255)
+  location          String            @db.VarChar(255)
+  budgetMin         Decimal?          @map("budget_min") @db.Decimal(10, 2)
+  budgetMax         Decimal?          @map("budget_max") @db.Decimal(10, 2)
+  roomType          RoomType          @map("room_type")
+  availableFrom     DateTime?         @map("available_from") @db.Date
+  preferences       Json?             // { gender?, smoking?, religious?, etc }
+  description       String?           @db.Text
+  contactPreference ContactPreference @default(PLATFORM) @map("contact_preference")
+  status            ListingStatus     @default(ACTIVE)
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  owner          User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  savedRoommates SavedRoommate[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("roommate_listings")
+}
+
+model SavedRoommate {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  listingId String   @map("listing_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing RoommateListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@map("saved_roommates")
+}
+
+model Business {
+  id          String           @id @default(uuid()) @db.VarChar(36)
+  slug        String           @unique @db.VarChar(255)
+  name        String           @db.VarChar(255)
+  logoUrl     String?          @map("logo_url") @db.VarChar(500)
+  description String?          @db.Text
+  category    BusinessCategory
+  phone       String?          @db.VarChar(20)
+  email       String?          @db.VarChar(255)
+  website     String?          @db.VarChar(500)
+  location    String?          @db.VarChar(255)
+  ownerId     String           @map("owner_id") @db.VarChar(36)
+  status      BusinessStatus   @default(PENDING)
+  socialLinks Json?            @map("social_links") // { instagram, twitter, facebook, linkedin }
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  owner    User              @relation(fields: [ownerId], references: [id])
+  services BusinessService[]
+  images   BusinessImage[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("businesses")
+}
+
+model BusinessService {
+  id          String  @id @default(uuid()) @db.VarChar(36)
+  businessId  String  @map("business_id") @db.VarChar(36)
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("business_services")
+}
+
+model BusinessImage {
+  id          String @id @default(uuid()) @db.VarChar(36)
+  businessId  String @map("business_id") @db.VarChar(36)
+  url         String @db.VarChar(500)
+  orderIndex  Int    @default(0) @map("order_index")
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("business_images")
+}
+
+model Event {
+  id              String      @id @default(uuid()) @db.VarChar(36)
+  title           String      @db.VarChar(255)
+  description     String?     @db.Text
+  eventType       EventType   @map("event_type")
+  date            DateTime
+  endDate         DateTime?   @map("end_date")
+  location        String?     @db.VarChar(255)
+  organizerId     String      @map("organizer_id") @db.VarChar(36)
+  coverImage      String?     @map("cover_image") @db.VarChar(500)
+  registrationUrl String?     @map("registration_url") @db.VarChar(500)
+  maxAttendees    Int?        @map("max_attendees")
+  status          EventStatus @default(UPCOMING)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  organizer     User                @relation("EventOrganizer", fields: [organizerId], references: [id])
+  registrations EventRegistration[]
+  communityId   String?             @map("community_id") @db.VarChar(36)
+  community     Community?          @relation(fields: [communityId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([status])
+  @@index([communityId])
+  @@map("events")
+}
+
+model EventRegistration {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  eventId   String   @map("event_id") @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@map("event_registrations")
+}
+
+model Achievement {
+  id          String              @id @default(uuid()) @db.VarChar(36)
+  name        String              @unique @db.VarChar(100)
+  slug        String              @unique @db.VarChar(100)
+  description String              @db.Text
+  category    AchievementCategory @default(FCI_CONNECT)
+  badgeIcon   String              @map("badge_icon") @db.VarChar(500)
+  points      Int                 @default(0)
+  criteria    String?             @db.Text
+  isActive    Boolean             @default(true) @map("is_active")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  userAchievements UserAchievement[]
+
+  @@index([category])
+  @@index([isActive])
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id              String                        @id @default(uuid()) @db.VarChar(36)
+  userId          String                        @map("user_id") @db.VarChar(36)
+  achievementId   String                        @map("achievement_id") @db.VarChar(36)
+  status          AchievementVerificationStatus @default(VERIFIED)
+  evidenceUrl     String?                       @map("evidence_url") @db.VarChar(500)
+  issuer          String?                       @db.VarChar(100)
+  evidenceNotes   String?                       @map("evidence_notes") @db.Text
+  rejectionReason String?                       @map("rejection_reason") @db.Text
+  earnedAt        DateTime                      @default(now()) @map("earned_at")
+  verifiedAt      DateTime?                     @map("verified_at")
+  verifiedById    String?                       @map("verified_by_id") @db.VarChar(36)
+  createdAt       DateTime                      @default(now()) @map("created_at")
+  updatedAt       DateTime                      @updatedAt @map("updated_at")
+
+  user        User        @relation("UserAchievements", fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  verifiedBy  User?       @relation("VerifiedAchievements", fields: [verifiedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
+  @@index([status])
+  @@map("user_achievements")
+}
+
+model ReputationEvent {
+  id            String   @id @default(uuid()) @db.VarChar(36)
+  userId        String   @map("user_id") @db.VarChar(36)
+  eventType     String   @map("event_type") @db.VarChar(100)
+  points        Int
+  referenceType String?  @map("reference_type") @db.VarChar(50)
+  referenceId   String?  @map("reference_id") @db.VarChar(36)
+  description   String?  @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("reputation_events")
+}
+
+model ReputationLevelConfig {
+  id          String  @id @default(uuid()) @db.VarChar(36)
+  levelName   String  @unique @map("level_name") @db.VarChar(50)
+  minPoints   Int     @map("min_points")
+  badgeIcon   String? @map("badge_icon") @db.VarChar(255)
+  description String? @db.VarChar(255)
+  orderIndex  Int     @default(0) @map("order_index")
+
+  @@map("reputation_level_configs")
+}
+
+model LeaderboardPoint {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  userId     String   @map("user_id") @db.VarChar(36)
+  action     String   @db.VarChar(100) // e.g. 'PROJECT_APPROVED', 'EVENT_ATTENDED'
+  points     Int
+  entityType String?  @map("entity_type") @db.VarChar(50)
+  entityId   String?  @map("entity_id") @db.VarChar(36)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("leaderboard_points")
+}
+
+model Notification {
+  id         String           @id @default(uuid()) @db.VarChar(36)
+  userId     String           @map("user_id") @db.VarChar(36)
+  type       NotificationType
+  title      String           @db.VarChar(255)
+  message    String           @db.Text
+  entityType String?          @map("entity_type") @db.VarChar(50)
+  entityId   String?          @map("entity_id") @db.VarChar(36)
+  isRead     Boolean          @default(false) @map("is_read")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model Report {
+  id          String           @id @default(uuid()) @db.VarChar(36)
+  reporterId  String           @map("reporter_id") @db.VarChar(36)
+  entityType  ReportEntityType @map("entity_type")
+  entityId    String           @map("entity_id") @db.VarChar(36)
+  reason      ReportReason
+  description String?          @db.Text
+  status      ReportStatus     @default(PENDING)
+  resolvedBy  String?          @map("resolved_by") @db.VarChar(36)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  reporter User  @relation("ReporterUser", fields: [reporterId], references: [id])
+  resolver User? @relation("ResolverUser", fields: [resolvedBy], references: [id])
+
+  @@index([status])
+  @@map("reports")
+}
+
+model SavedItem {
+  id         String          @id @default(uuid()) @db.VarChar(36)
+  userId     String          @map("user_id") @db.VarChar(36)
+  entityType SavedEntityType @map("entity_type")
+  entityId   String          @map("entity_id") @db.VarChar(36)
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entityType, entityId])
+  @@map("saved_items")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  actorId    String   @map("actor_id") @db.VarChar(36)
+  action     String   @db.VarChar(100)
+  entityType String?  @map("entity_type") @db.VarChar(50)
+  entityId   String?  @map("entity_id") @db.VarChar(36)
+  metadata   Json?
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Announcement {
+  id               String               @id @default(uuid()) @db.VarChar(36)
+  title            String               @db.VarChar(255)
+  slug             String?              @unique @db.VarChar(255)
+  content          String               @db.Text
+  priority         AnnouncementPriority @default(NORMAL)
+  category         AnnouncementCategory @default(GENERAL)
+  audience         AnnouncementAudience @default(ALL)
+  targetDepartment Department?          @map("target_department")
+  targetLevel      Level?               @map("target_level")
+  isPinned         Boolean              @default(false) @map("is_pinned")
+  isActive         Boolean              @default(true) @map("is_active")
+  status           AnnouncementStatus   @default(PUBLISHED)
+  publishAt        DateTime?            @map("publish_at")
+  expiresAt        DateTime?            @map("expires_at")
+  viewsCount       Int                  @default(0) @map("views_count")
+  createdBy        String               @map("created_by") @db.VarChar(36)
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime?            @updatedAt @map("updated_at")
+
+  creator User               @relation(fields: [createdBy], references: [id])
+  reads   AnnouncementRead[]
+
+  @@index([priority])
+  @@index([category])
+  @@index([status])
+  @@index([isPinned])
+  @@map("announcements")
+}
+
+model Skill {
+  id          String        @id @default(uuid()) @db.VarChar(36)
+  name        String        @unique @db.VarChar(100)
+  slug        String        @unique @db.VarChar(100)
+  category    SkillCategory
+  description String?       @db.Text
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  studentSkills       StudentSkill[]
+  projectSkills       ProjectSkill[]
+  projectRequirements ProjectRequirement[]
+  opportunitySkills   OpportunitySkill[]
+  resourceSkills      LearningResourceSkill[]
+  assessments         SkillAssessment[]
+
+  @@index([category])
+  @@map("skills")
+}
+
+model StudentSkill {
+  id                String           @id @default(uuid()) @db.VarChar(36)
+  userId            String           @map("user_id") @db.VarChar(36)
+  skillId           String           @map("skill_id") @db.VarChar(36)
+  proficiency       SkillProficiency @default(INTERMEDIATE)
+  yearsOfExperience Int?             @map("years_of_experience")
+  isPrimary         Boolean          @default(false) @map("is_primary")
+  isVerified        Boolean          @default(false) @map("is_verified")
+  verifiedScore     Int?             @map("verified_score")
+  verifiedAt        DateTime?        @map("verified_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+  @@index([skillId])
+  @@index([userId])
+  @@index([isVerified])
+  @@map("student_skills")
+}
+
+model ProjectSkill {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  projectId String   @map("project_id") @db.VarChar(36)
+  skillId   String   @map("skill_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skill   Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, skillId])
+  @@index([skillId])
+  @@map("project_skills")
+}
+
+model ProjectTeam {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  projectId   String?  @unique @map("project_id") @db.VarChar(36)
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  creatorId   String   @map("creator_id") @db.VarChar(36)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  creator      User                 @relation("TeamCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  project      Project?             @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  members      ProjectTeamMember[]
+  requirements ProjectRequirement[]
+  invitations  TeamInvitation[]
+
+  @@index([creatorId])
+  @@map("project_teams")
+}
+
+model ProjectTeamMember {
+  id       String   @id @default(uuid()) @db.VarChar(36)
+  teamId   String   @map("team_id") @db.VarChar(36)
+  userId   String   @map("user_id") @db.VarChar(36)
+  role     String   @db.VarChar(100)
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  team ProjectTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([userId])
+  @@map("project_team_members")
+}
+
+model ProjectRequirement {
+  id         String                   @id @default(uuid()) @db.VarChar(36)
+  teamId     String                   @map("team_id") @db.VarChar(36)
+  skillId    String                   @map("skill_id") @db.VarChar(36)
+  priority   SkillRequirementPriority @default(REQUIRED)
+  targetRole String?                  @map("target_role") @db.VarChar(100)
+  minLevel   SkillProficiency?        @map("min_level")
+
+  team  ProjectTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  skill Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, skillId])
+  @@index([skillId])
+  @@map("project_requirements")
+}
+
+model TeamInvitation {
+  id           String               @id @default(uuid()) @db.VarChar(36)
+  senderId     String               @map("sender_id") @db.VarChar(36)
+  receiverId   String               @map("receiver_id") @db.VarChar(36)
+  teamId       String?              @map("team_id") @db.VarChar(36)
+  projectId    String?              @map("project_id") @db.VarChar(36)
+  projectTitle String               @map("project_title") @db.VarChar(255)
+  role         String               @db.VarChar(100)
+  message      String?              @db.Text
+  status       TeamInvitationStatus @default(PENDING)
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+
+  sender   User         @relation("SentInvitations", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User         @relation("ReceivedInvitations", fields: [receiverId], references: [id], onDelete: Cascade)
+  team     ProjectTeam? @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project  Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([status])
+  @@map("team_invitations")
+}
+
+model Opportunity {
+  id                 String              @id @default(uuid()) @db.VarChar(36)
+  slug               String              @unique @db.VarChar(255)
+  title              String              @db.VarChar(255)
+  description        String              @db.Text
+  organization       String              @db.VarChar(255)
+  category           OpportunityCategory
+  location           String?             @db.VarChar(255)
+  isRemote           Boolean             @default(false) @map("is_remote")
+  applicationUrl     String              @map("application_url") @db.VarChar(500)
+  applicationProcess String?             @map("application_process") @db.Text
+  deadline           DateTime?
+  startDate          DateTime?           @map("start_date")
+  endDate            DateTime?           @map("end_date")
+  eligibility        String?             @db.Text
+  status             OpportunityStatus   @default(PENDING_REVIEW)
+  isFeatured         Boolean             @default(false) @map("is_featured")
+  viewsCount         Int                 @default(0) @map("views_count")
+  createdById        String              @map("created_by_id") @db.VarChar(36)
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+
+  creator            User                @relation("CreatedOpportunities", fields: [createdById], references: [id], onDelete: Cascade)
+  requiredSkills     OpportunitySkill[]
+  savedBy            SavedOpportunity[]
+  reports            OpportunityReport[]
+  trackedApplications OpportunityApplication[]
+  labProjects        LabProject[]         @relation("LabOpportunity")
+
+  @@index([category])
+  @@index([status])
+  @@index([deadline])
+  @@index([isFeatured])
+  @@index([createdById])
+  @@map("opportunities")
+}
+
+model OpportunitySkill {
+  id            String                   @id @default(uuid()) @db.VarChar(36)
+  opportunityId String                   @map("opportunity_id") @db.VarChar(36)
+  skillId       String                   @map("skill_id") @db.VarChar(36)
+  priority      SkillRequirementPriority @default(REQUIRED)
+  minLevel      SkillProficiency?        @map("min_level")
+  createdAt     DateTime                 @default(now()) @map("created_at")
+
+  opportunity   Opportunity              @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  skill         Skill                    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, skillId])
+  @@index([skillId])
+  @@map("opportunity_skills")
+}
+
+model SavedOpportunity {
+  id            String      @id @default(uuid()) @db.VarChar(36)
+  userId        String      @map("user_id") @db.VarChar(36)
+  opportunityId String      @map("opportunity_id") @db.VarChar(36)
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId])
+  @@index([opportunityId])
+  @@map("saved_opportunities")
+}
+
+model OpportunityReport {
+  id            String       @id @default(uuid()) @db.VarChar(36)
+  opportunityId String       @map("opportunity_id") @db.VarChar(36)
+  reporterId    String       @map("reporter_id") @db.VarChar(36)
+  reason        ReportReason
+  description   String?      @db.Text
+  status        ReportStatus @default(PENDING)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  reporter      User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([opportunityId])
+  @@index([reporterId])
+  @@map("opportunity_reports")
+}
+
+// ── COPILOT MODELS ────────────────────────────────────────────────────────────
+
+model CopilotConversation {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages CopilotMessage[]
+  feedback CopilotFeedback[]
+
+  @@index([userId])
+  @@map("copilot_conversations")
+}
+
+model CopilotMessage {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  conversationId   String   @map("conversation_id") @db.VarChar(36)
+  role             String   @db.VarChar(20) // "user" | "assistant" | "system"
+  content          String   @db.LongText
+  provider         String?  @db.VarChar(50)
+  model            String?  @db.VarChar(100)
+  tokenUsage       Json?    @map("token_usage")
+  suggestedActions Json?    @map("suggested_actions")
+  metadata         Json?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  conversation CopilotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt])
+  @@map("copilot_messages")
+}
+
+model CopilotUsage {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  userId       String   @map("user_id") @db.VarChar(36)
+  date         DateTime @db.Date
+  requestCount Int      @default(0) @map("request_count")
+  tokenCount   Int      @default(0) @map("token_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("copilot_usage")
+}
+
+model CopilotFeedback {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  conversationId String   @map("conversation_id") @db.VarChar(36)
+  messageId      String?  @map("message_id") @db.VarChar(36)
+  userId         String   @map("user_id") @db.VarChar(36)
+  rating         Int // 1 (thumbs down) or 5 (thumbs up)
+  feedback       String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation CopilotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([userId])
+  @@map("copilot_feedback")
+}
+
+// ── PHASE 4 MODELS ────────────────────────────────────────────────────────────
+
+model CampusLocation {
+  id           String                 @id @default(uuid()) @db.VarChar(36)
+  name         String                 @db.VarChar(255)
+  slug         String                 @unique @db.VarChar(255)
+  description  String?                @db.Text
+  category     CampusLocationCategory @default(OTHER)
+  building     String?                @db.VarChar(255)
+  latitude     Decimal?               @db.Decimal(10, 7)
+  longitude    Decimal?               @db.Decimal(10, 7)
+  address      String?                @db.VarChar(500)
+  floor        String?                @db.VarChar(50)
+  room         String?                @db.VarChar(100)
+  phone        String?                @db.VarChar(50)
+  email        String?                @db.VarChar(255)
+  openingHours Json?                  @map("opening_hours")
+  imageUrl     String?                @map("image_url") @db.VarChar(500)
+  isActive     Boolean                @default(true) @map("is_active")
+  needsCoords  Boolean                @default(true) @map("needs_coords")
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([isActive])
+  @@index([slug])
+  @@map("campus_locations")
+}
+
+model ActivityFeed {
+  id          String             @id @default(uuid()) @db.VarChar(36)
+  actorId     String             @map("actor_id") @db.VarChar(36)
+  type        ActivityType
+  entityType  String             @map("entity_type") @db.VarChar(50)
+  entityId    String?            @map("entity_id") @db.VarChar(36)
+  title       String             @db.VarChar(500)
+  description String?            @db.Text
+  metadata    Json?
+  imageUrl    String?            @map("image_url") @db.VarChar(500)
+  visibility  ActivityVisibility @default(PUBLIC)
+  createdAt   DateTime           @default(now()) @map("created_at")
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId])
+  @@index([type])
+  @@index([visibility])
+  @@index([createdAt])
+  @@map("activity_feed")
+}
+
+// ── PHASE 5 MODELS: CLUBS & COMMUNITIES ───────────────────────────────────────
+
+model Community {
+  id          String              @id @default(uuid()) @db.VarChar(36)
+  name        String              @db.VarChar(255)
+  slug        String              @unique @db.VarChar(255)
+  description String?             @db.Text
+  category    CommunityCategory   @default(OTHER)
+  logo        String?             @db.VarChar(500)
+  coverImage  String?             @map("cover_image") @db.VarChar(500)
+  ownerId     String              @map("owner_id") @db.VarChar(36)
+  visibility  CommunityVisibility @default(PUBLIC)
+  status      CommunityStatus     @default(ACTIVE)
+  isFeatured  Boolean             @default(false) @map("is_featured")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  owner     User                  @relation("CommunityOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members   CommunityMembership[]
+  posts     CommunityPost[]
+  resources CommunityResource[]
+  projects  Project[]
+  events    Event[]
+
+  @@index([category])
+  @@index([status])
+  @@index([visibility])
+  @@index([ownerId])
+  @@map("communities")
+}
+
+model CommunityMembership {
+  id          String                    @id @default(uuid()) @db.VarChar(36)
+  communityId String                    @map("community_id") @db.VarChar(36)
+  userId      String                    @map("user_id") @db.VarChar(36)
+  role        CommunityMemberRole       @default(MEMBER)
+  status      CommunityMembershipStatus @default(ACTIVE)
+  joinedAt    DateTime                  @default(now()) @map("joined_at")
+  updatedAt   DateTime                  @updatedAt @map("updated_at")
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+  @@index([communityId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@map("community_memberships")
+}
+
+model CommunityPost {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  communityId    String   @map("community_id") @db.VarChar(36)
+  authorId       String   @map("author_id") @db.VarChar(36)
+  title          String?  @db.VarChar(255)
+  content        String   @db.Text
+  isAnnouncement Boolean  @default(false) @map("is_announcement")
+  isPinned       Boolean  @default(false) @map("is_pinned")
+  isHidden       Boolean  @default(false) @map("is_hidden")
+  likesCount     Int      @default(0) @map("likes_count")
+  commentsCount  Int      @default(0) @map("comments_count")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  community Community              @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author    User                   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments  CommunityPostComment[]
+  likes     CommunityPostLike[]
+
+  @@index([communityId])
+  @@index([authorId])
+  @@index([isAnnouncement])
+  @@index([createdAt])
+  @@map("community_posts")
+}
+
+model CommunityPostComment {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  postId    String   @map("post_id") @db.VarChar(36)
+  authorId  String   @map("author_id") @db.VarChar(36)
+  content   String   @db.Text
+  isHidden  Boolean  @default(false) @map("is_hidden")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  post   CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("community_post_comments")
+}
+
+model CommunityPostLike {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  postId    String   @map("post_id") @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@map("community_post_likes")
+}
+
+model CommunityResource {
+  id          String                @id @default(uuid()) @db.VarChar(36)
+  communityId String                @map("community_id") @db.VarChar(36)
+  title       String                @db.VarChar(255)
+  description String?               @db.Text
+  url         String                @db.VarChar(500)
+  type        CommunityResourceType @default(ARTICLE)
+  createdById String                @map("created_by_id") @db.VarChar(36)
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  creator   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([communityId])
+  @@index([createdById])
+  @@map("community_resources")
+}
+
+// ── PHASE 5 MODELS: MENTORSHIP & PEER LEARNING ────────────────────────────────
+
+model MentorProfile {
+  id            String                 @id @default(uuid()) @db.VarChar(36)
+  userId        String                 @unique @map("user_id") @db.VarChar(36)
+  headline      String                 @db.VarChar(255)
+  bio           String?                @db.Text
+  areas         Json                   // string[] e.g. ["Cybersecurity", "Python"]
+  availability  String                 @db.VarChar(255) // e.g. "Evenings & Weekends"
+  languages     Json?                  // string[] e.g. ["English", "Yoruba"]
+  maxMentees    Int                    @default(3) @map("max_mentees")
+  sessionFormat MentorshipSessionFormat @default(CHAT) @map("session_format")
+  isAvailable   Boolean                @default(true) @map("is_available")
+  createdAt     DateTime               @default(now()) @map("created_at")
+  updatedAt     DateTime               @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isAvailable])
+  @@map("mentor_profiles")
+}
+
+model Mentorship {
+  id              String           @id @default(uuid()) @db.VarChar(36)
+  mentorId        String           @map("mentor_id") @db.VarChar(36)
+  menteeId        String           @map("mentee_id") @db.VarChar(36)
+  goal            String           @db.Text
+  status          MentorshipStatus @default(PENDING)
+  rejectionReason String?          @map("rejection_reason") @db.Text
+  startedAt       DateTime?        @map("started_at")
+  endedAt         DateTime?        @map("ended_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  mentor    User                 @relation("MentorMentorships", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee    User                 @relation("MenteeMentorships", fields: [menteeId], references: [id], onDelete: Cascade)
+  goals     MentorshipGoal[]
+  sessions  MentorshipSession[]
+  resources MentorshipResource[]
+
+  @@index([mentorId])
+  @@index([menteeId])
+  @@index([status])
+  @@map("mentorships")
+}
+
+model MentorshipGoal {
+  id           String               @id @default(uuid()) @db.VarChar(36)
+  mentorshipId String               @map("mentorship_id") @db.VarChar(36)
+  title        String               @db.VarChar(255)
+  target       String?              @db.Text
+  progress     Int                  @default(0) // 0 - 100
+  status       MentorshipGoalStatus @default(NOT_STARTED)
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+
+  mentorship Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId])
+  @@map("mentorship_goals")
+}
+
+model MentorshipSession {
+  id           String                  @id @default(uuid()) @db.VarChar(36)
+  mentorshipId String                  @map("mentorship_id") @db.VarChar(36)
+  title        String                  @db.VarChar(255)
+  description  String?                 @db.Text
+  scheduledAt  DateTime                @map("scheduled_at")
+  duration     Int                     @default(60) // minutes
+  meetingUrl   String?                 @map("meeting_url") @db.VarChar(500)
+  status       MentorshipSessionStatus @default(SCHEDULED)
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @updatedAt @map("updated_at")
+
+  mentorship Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId])
+  @@index([scheduledAt])
+  @@map("mentorship_sessions")
+}
+
+model MentorshipResource {
+  id           String                @id @default(uuid()) @db.VarChar(36)
+  mentorshipId String                @map("mentorship_id") @db.VarChar(36)
+  title        String                @db.VarChar(255)
+  description  String?               @db.Text
+  url          String                @db.VarChar(500)
+  type         CommunityResourceType @default(ARTICLE)
+  sharedById   String                @map("shared_by_id") @db.VarChar(36)
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
+
+  mentorship Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  sharedBy   User       @relation(fields: [sharedById], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId])
+  @@index([sharedById])
+  @@map("mentorship_resources")
+}
+
+// ── PHASE 6: SMART STUDY & LEARNING HUB & DIGITAL FCI ID ─────────────────────
+
+model LearningResource {
+  id              String                   @id @default(uuid()) @db.VarChar(36)
+  title           String                   @db.VarChar(255)
+  slug            String                   @unique @db.VarChar(255)
+  description     String?                  @db.Text
+  resourceType    LearningResourceType     @map("resource_type")
+  category        LearningResourceCategory
+  subject         String?                  @db.VarChar(255) // e.g. Data Structures & Algorithms
+  courseCode      String?                  @map("course_code") @db.VarChar(50) // e.g. CSC 301
+  department      Department?
+  level           Level?
+  semester        String?                  @db.VarChar(20) // e.g. FIRST, SECOND
+  url             String?                  @db.VarChar(1000)
+  fileUrl         String?                  @map("file_url") @db.VarChar(1000)
+  fileSize        Int?                     @map("file_size")
+  mimeType        String?                  @map("mime_type") @db.VarChar(100)
+  thumbnail       String?                  @db.VarChar(1000)
+  authorId        String?                  @map("author_id") @db.VarChar(36)
+  status          ResourceSubmissionStatus @default(APPROVED)
+  rejectionReason String?                  @map("rejection_reason") @db.Text
+  isPublished     Boolean                  @default(true) @map("is_published")
+  isFeatured      Boolean                  @default(false) @map("is_featured")
+  viewsCount      Int                      @default(0) @map("views_count")
+  downloadsCount  Int                      @default(0) @map("downloads_count")
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @updatedAt @map("updated_at")
+
+  author    User?                      @relation("AuthorLearningResources", fields: [authorId], references: [id], onDelete: SetNull)
+  progress  LearningResourceProgress[]
+  pathItems LearningPathItem[]
+  skills    LearningResourceSkill[]
+  labProjectResources LabProjectResource[]
+
+  @@index([category])
+  @@index([resourceType])
+  @@index([courseCode])
+  @@index([department])
+  @@index([level])
+  @@index([status])
+  @@index([isPublished])
+  @@index([isFeatured])
+  @@map("learning_resources")
+}
+
+model LearningResourceProgress {
+  id                 String                 @id @default(uuid()) @db.VarChar(36)
+  userId             String                 @map("user_id") @db.VarChar(36)
+  resourceId         String                 @map("resource_id") @db.VarChar(36)
+  status             LearningProgressStatus @default(IN_PROGRESS)
+  progressPercentage Int                    @default(0) @map("progress_percentage") // 0 - 100
+  startedAt          DateTime               @default(now()) @map("started_at")
+  completedAt        DateTime?              @map("completed_at")
+  updatedAt          DateTime               @updatedAt @map("updated_at")
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, resourceId])
+  @@index([userId])
+  @@index([resourceId])
+  @@index([status])
+  @@map("learning_resource_progress")
+}
+
+model LearningPath {
+  id                String                   @id @default(uuid()) @db.VarChar(36)
+  title             String                   @db.VarChar(255)
+  slug              String                   @unique @db.VarChar(255)
+  description       String                   @db.Text
+  category          LearningResourceCategory
+  difficulty        LearningPathDifficulty   @default(BEGINNER)
+  estimatedDuration String?                  @map("estimated_duration") @db.VarChar(100)
+  thumbnail         String?                  @db.VarChar(1000)
+  isPublished       Boolean                  @default(true) @map("is_published")
+  isFeatured        Boolean                  @default(false) @map("is_featured")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+
+  items       LearningPathItem[]
+  enrollments LearningPathEnrollment[]
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([isPublished])
+  @@map("learning_paths")
+}
+
+model LearningPathItem {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  learningPathId String   @map("learning_path_id") @db.VarChar(36)
+  resourceId     String   @map("resource_id") @db.VarChar(36)
+  position       Int      @default(0)
+  isRequired     Boolean  @default(true) @map("is_required")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  learningPath LearningPath     @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  resource     LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([learningPathId, resourceId])
+  @@index([learningPathId, position])
+  @@map("learning_path_items")
+}
+
+model LearningPathEnrollment {
+  id                 String    @id @default(uuid()) @db.VarChar(36)
+  userId             String    @map("user_id") @db.VarChar(36)
+  learningPathId     String    @map("learning_path_id") @db.VarChar(36)
+  progressPercentage Int       @default(0) @map("progress_percentage")
+  isCompleted        Boolean   @default(false) @map("is_completed")
+  completedAt        DateTime? @map("completed_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  learningPath LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, learningPathId])
+  @@index([userId])
+  @@index([learningPathId])
+  @@map("learning_path_enrollments")
+}
+
+model LearningResourceSkill {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  resourceId String   @map("resource_id") @db.VarChar(36)
+  skillId    String   @map("skill_id") @db.VarChar(36)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  resource LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  skill    Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, skillId])
+  @@index([skillId])
+  @@map("learning_resource_skills")
+}
+
+model DigitalIdentity {
+  id               String          @id @default(uuid()) @db.VarChar(36)
+  userId           String          @unique @map("user_id") @db.VarChar(36)
+  fciId            String          @unique @map("fci_id") @db.VarChar(64)
+  verificationToken String         @unique @map("verification_token") @db.VarChar(128)
+  status           DigitalIdStatus @default(PENDING)
+  verifiedAt       DateTime?       @map("verified_at")
+  verifiedById     String?         @map("verified_by_id") @db.VarChar(36)
+  suspensionReason String?         @map("suspension_reason") @db.Text
+  revocationReason String?         @map("revocation_reason") @db.Text
+  showSkills       Boolean         @default(true) @map("show_skills")
+  showAchievements Boolean         @default(true) @map("show_achievements")
+  showPortfolio    Boolean         @default(true) @map("show_portfolio")
+  qrCodeDataUrl    String?         @map("qr_code_data_url") @db.LongText
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  user       User              @relation("UserDigitalIdentity", fields: [userId], references: [id], onDelete: Cascade)
+  verifiedBy User?             @relation("VerifierDigitalIdentity", fields: [verifiedById], references: [id], onDelete: SetNull)
+  logs       VerificationLog[]
+
+  @@index([status])
+  @@index([fciId])
+  @@index([verificationToken])
+  @@map("digital_identities")
+}
+
+model VerificationLog {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  digitalId  String   @map("digital_id") @db.VarChar(36)
+  token      String   @db.VarChar(128)
+  result     String   @db.VarChar(50) // SUCCESS, SUSPENDED, REVOKED, NOT_FOUND
+  ipHash     String?  @map("ip_hash") @db.VarChar(64)
+  userAgent  String?  @map("user_agent") @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  identity DigitalIdentity @relation(fields: [digitalId], references: [id], onDelete: Cascade)
+
+  @@index([digitalId])
+  @@index([createdAt])
+  @@map("verification_logs")
+}
+
+// ── PHASE 7: FCI PROJECT LAB & ADVANCED OPPORTUNITY TRACKER ──────────────────
+
+model LabProject {
+  id               String               @id @default(uuid()) @db.VarChar(36)
+  title            String               @db.VarChar(255)
+  slug             String               @unique @db.VarChar(255)
+  description      String               @db.Text
+  category         ProjectCategory
+  problemStatement String?              @map("problem_statement") @db.Text
+  objectives       String?              @db.Text
+  department       Department?
+  visibility       LabProjectVisibility @default(FCI_ONLY)
+  status           LabProjectStatus     @default(IDEA)
+  startDate        DateTime?            @map("start_date")
+  targetDate       DateTime?            @map("target_date")
+  githubUrl        String?              @map("github_url") @db.VarChar(500)
+  liveDemoUrl      String?              @map("live_demo_url") @db.VarChar(500)
+  documentationUrl String?              @map("documentation_url") @db.VarChar(500)
+  coverImage       String?              @map("cover_image") @db.VarChar(500)
+  createdById      String               @map("created_by_id") @db.VarChar(36)
+  showcaseProjectId String?             @unique @map("showcase_project_id") @db.VarChar(36)
+  opportunityId    String?              @map("opportunity_id") @db.VarChar(36)
+  mentorId         String?              @map("mentor_id") @db.VarChar(36)
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+
+  createdBy       User                     @relation("CreatedLabProjects", fields: [createdById], references: [id], onDelete: Cascade)
+  mentor          User?                    @relation("MentoredLabProjects", fields: [mentorId], references: [id], onDelete: SetNull)
+  showcaseProject Project?                 @relation("LabShowcaseProject", fields: [showcaseProjectId], references: [id], onDelete: SetNull)
+  opportunity     Opportunity?             @relation("LabOpportunity", fields: [opportunityId], references: [id], onDelete: SetNull)
+  members         LabProjectMember[]
+  tasks           LabProjectTask[]
+  milestones      LabProjectMilestone[]
+  discussions     LabProjectDiscussion[]
+  resources       LabProjectResource[]
+  trackedApplications OpportunityApplication[]
+
+  @@index([status])
+  @@index([visibility])
+  @@index([category])
+  @@index([createdById])
+  @@index([department])
+  @@map("lab_projects")
+}
+
+model LabProjectMember {
+  id        String          @id @default(uuid()) @db.VarChar(36)
+  projectId String          @map("project_id") @db.VarChar(36)
+  userId    String          @map("user_id") @db.VarChar(36)
+  role      LabTeamRole     @default(DEVELOPER)
+  status    LabMemberStatus @default(INVITED)
+  joinedAt  DateTime?       @map("joined_at")
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  project LabProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@map("lab_project_members")
+}
+
+model LabProjectTask {
+  id          String           @id @default(uuid()) @db.VarChar(36)
+  projectId   String           @map("project_id") @db.VarChar(36)
+  milestoneId String?          @map("milestone_id") @db.VarChar(36)
+  title       String           @db.VarChar(255)
+  description String?          @db.Text
+  status      LabTaskStatus    @default(TODO)
+  priority    LabTaskPriority  @default(MEDIUM)
+  assigneeId  String?          @map("assignee_id") @db.VarChar(36)
+  creatorId   String           @map("creator_id") @db.VarChar(36)
+  dueDate     DateTime?        @map("due_date")
+  position    Int              @default(0)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  project   LabProject           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone LabProjectMilestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  assignee  User?                @relation("AssignedLabTasks", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creator   User                 @relation("CreatedLabTasks", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, status])
+  @@index([assigneeId])
+  @@index([milestoneId])
+  @@map("lab_project_tasks")
+}
+
+model LabProjectMilestone {
+  id          String             @id @default(uuid()) @db.VarChar(36)
+  projectId   String             @map("project_id") @db.VarChar(36)
+  title       String             @db.VarChar(255)
+  description String?            @db.Text
+  dueDate     DateTime?          @map("due_date")
+  status      LabMilestoneStatus @default(PLANNED)
+  position    Int                @default(0)
+  completedAt DateTime?          @map("completed_at")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  project LabProject       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   LabProjectTask[]
+
+  @@index([projectId, status])
+  @@index([projectId, position])
+  @@map("lab_project_milestones")
+}
+
+model LabProjectDiscussion {
+  id        String    @id @default(uuid()) @db.VarChar(36)
+  projectId String    @map("project_id") @db.VarChar(36)
+  authorId  String    @map("author_id") @db.VarChar(36)
+  content   String    @db.Text
+  parentId  String?   @map("parent_id") @db.VarChar(36)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  project LabProject             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author  User                   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent  LabProjectDiscussion?  @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies LabProjectDiscussion[] @relation("DiscussionReplies")
+
+  @@index([projectId])
+  @@index([authorId])
+  @@map("lab_project_discussions")
+}
+
+model LabProjectResource {
+  id                 String   @id @default(uuid()) @db.VarChar(36)
+  projectId          String   @map("project_id") @db.VarChar(36)
+  title              String   @db.VarChar(255)
+  url                String   @db.VarChar(500)
+  type               String   @default("DOCUMENTATION") @db.VarChar(50)
+  learningResourceId String?  @map("learning_resource_id") @db.VarChar(36)
+  addedById          String   @map("added_by_id") @db.VarChar(36)
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  project          LabProject        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  addedBy          User              @relation(fields: [addedById], references: [id], onDelete: Cascade)
+  learningResource LearningResource? @relation(fields: [learningResourceId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@map("lab_project_resources")
+}
+
+model OpportunityApplication {
+  id                  String                 @id @default(uuid()) @db.VarChar(36)
+  userId              String                 @map("user_id") @db.VarChar(36)
+  opportunityId       String                 @map("opportunity_id") @db.VarChar(36)
+  status              OpportunityTrackStatus @default(SAVED)
+  appliedAt           DateTime?              @map("applied_at")
+  followUpDate        DateTime?              @map("follow_up_date")
+  notes               String?                @db.Text
+  applicationUrl      String?                @map("application_url") @db.VarChar(500)
+  result              String?                @db.VarChar(255)
+  documentTypes       Json?                  @map("document_types")
+  remindDaysBefore    Int?                   @default(7) @map("remind_days_before")
+  linkedLabProjectId  String?                @map("linked_lab_project_id") @db.VarChar(36)
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
+
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity      Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  linkedLabProject LabProject? @relation(fields: [linkedLabProjectId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, opportunityId])
+  @@index([userId, status])
+  @@index([opportunityId])
+  @@map("opportunity_applications")
+}
+
+// ── PHASE 8: RESEARCH & INNOVATION HUB ────────────────────────────────────────
+
+model ResearchProject {
+  id               String             @id @default(uuid()) @db.VarChar(36)
+  title            String             @db.VarChar(255)
+  slug             String             @unique @db.VarChar(255)
+  description      String             @db.Text
+  abstract         String?            @db.Text
+  problemStatement String?            @map("problem_statement") @db.Text
+  objectives       String?            @db.Text
+  methodology      String?            @db.Text
+  category         String             @db.VarChar(100)
+  department       Department?
+  researchStatus   ResearchStatus     @default(IDEA) @map("research_status")
+  visibility       ResearchVisibility @default(PUBLIC)
+  ownerId          String             @map("owner_id") @db.VarChar(36)
+  mentorId         String?            @map("mentor_id") @db.VarChar(36)
+  startDate        DateTime?          @map("start_date")
+  targetDate       DateTime?          @map("target_date")
+  githubUrl        String?            @map("github_url") @db.VarChar(500)
+  paperUrl         String?            @map("paper_url") @db.VarChar(500)
+  datasetUrl       String?            @map("dataset_url") @db.VarChar(500)
+  publicationUrl   String?            @map("publication_url") @db.VarChar(500)
+  coverImage       String?            @map("cover_image") @db.VarChar(500)
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+
+  owner        User                  @relation("OwnedResearchProjects", fields: [ownerId], references: [id], onDelete: Cascade)
+  mentor       User?                 @relation("MentoredResearchProjects", fields: [mentorId], references: [id], onDelete: SetNull)
+  members      ResearchMember[]
+  publications ResearchPublication[]
+
+  @@index([category])
+  @@index([researchStatus])
+  @@index([visibility])
+  @@index([ownerId])
+  @@map("research_projects")
+}
+
+model ResearchMember {
+  id                String             @id @default(uuid()) @db.VarChar(36)
+  researchProjectId String             @map("research_project_id") @db.VarChar(36)
+  userId            String             @map("user_id") @db.VarChar(36)
+  role              ResearchMemberRole @default(RESEARCHER)
+  status            String             @default("ACTIVE") @db.VarChar(50)
+  joinedAt          DateTime           @default(now()) @map("joined_at")
+
+  project ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([researchProjectId, userId])
+  @@index([userId])
+  @@map("research_members")
+}
+
+model ResearchIdea {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  authorId    String   @map("author_id") @db.VarChar(36)
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  category    String   @db.VarChar(100)
+  likesCount  Int      @default(0) @map("likes_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  author   User                  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes    ResearchIdeaLike[]
+  comments ResearchIdeaComment[]
+
+  @@index([category])
+  @@index([authorId])
+  @@map("research_ideas")
+}
+
+model ResearchIdeaLike {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  ideaId    String   @map("idea_id") @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  idea ResearchIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([ideaId, userId])
+  @@map("research_idea_likes")
+}
+
+model ResearchIdeaComment {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  ideaId    String   @map("idea_id") @db.VarChar(36)
+  authorId  String   @map("author_id") @db.VarChar(36)
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  idea   ResearchIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  author User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ideaId])
+  @@map("research_idea_comments")
+}
+
+model ResearchPublication {
+  id                  String    @id @default(uuid()) @db.VarChar(36)
+  researchProjectId   String    @map("research_project_id") @db.VarChar(36)
+  title               String    @db.VarChar(255)
+  authors             String    @db.VarChar(500)
+  abstract            String?   @db.Text
+  publicationDate     DateTime? @map("publication_date")
+  journalOrConference String?   @map("journal_or_conference") @db.VarChar(255)
+  doi                 String?   @db.VarChar(100)
+  paperUrl            String?   @map("paper_url") @db.VarChar(500)
+  repositoryUrl       String?   @map("repository_url") @db.VarChar(500)
+  createdAt           DateTime  @default(now()) @map("created_at")
+
+  project ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+
+  @@index([researchProjectId])
+  @@map("research_publications")
+}
+
+// ── PHASE 8: SIWES & INTERNSHIP PLACEMENT MANAGER ─────────────────────────────
+
+model SiwesPlacement {
+  id                      String      @id @default(uuid()) @db.VarChar(36)
+  studentId               String      @map("student_id") @db.VarChar(36)
+  companyName             String      @map("company_name") @db.VarChar(255)
+  companyAddress          String?     @map("company_address") @db.VarChar(500)
+  roleTitle               String?     @map("role_title") @db.VarChar(255)
+  industrySupervisorName  String?     @map("industry_supervisor_name") @db.VarChar(150)
+  industrySupervisorEmail String?     @map("industry_supervisor_email") @db.VarChar(255)
+  industrySupervisorPhone String?     @map("industry_supervisor_phone") @db.VarChar(50)
+  academicSupervisorId    String?     @map("academic_supervisor_id") @db.VarChar(36)
+  status                  SiwesStatus @default(SEARCHING)
+  startDate               DateTime?   @map("start_date")
+  endDate                 DateTime?   @map("end_date")
+  department              Department?
+  createdAt               DateTime    @default(now()) @map("created_at")
+  updatedAt               DateTime    @updatedAt @map("updated_at")
+
+  student            User             @relation("StudentPlacements", fields: [studentId], references: [id], onDelete: Cascade)
+  academicSupervisor User?            @relation("AcademicSupervisorPlacements", fields: [academicSupervisorId], references: [id], onDelete: SetNull)
+  weeklyLogs         SiwesWeeklyLog[]
+  documents          SiwesDocument[]
+
+  @@index([studentId])
+  @@index([status])
+  @@map("siwes_placements")
+}
+
+model SiwesWeeklyLog {
+  id                 String         @id @default(uuid()) @db.VarChar(36)
+  placementId        String         @map("placement_id") @db.VarChar(36)
+  weekNumber         Int            @map("week_number")
+  startDate          DateTime?      @map("start_date")
+  endDate            DateTime?      @map("end_date")
+  activities         String         @db.Text
+  skillsLearned      String?        @map("skills_learned") @db.Text
+  challenges         String?        @db.Text
+  supervisorComments String?        @map("supervisor_comments") @db.Text
+  documentUrl        String?        @map("document_url") @db.VarChar(500)
+  status             SiwesLogStatus @default(DRAFT)
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+
+  placement SiwesPlacement @relation(fields: [placementId], references: [id], onDelete: Cascade)
+
+  @@unique([placementId, weekNumber])
+  @@index([placementId])
+  @@map("siwes_weekly_logs")
+}
+
+model SiwesDocument {
+  id          String       @id @default(uuid()) @db.VarChar(36)
+  placementId String       @map("placement_id") @db.VarChar(36)
+  title       String       @db.VarChar(255)
+  docType     SiwesDocType @default(REPORT) @map("doc_type")
+  fileUrl     String       @map("file_url") @db.VarChar(500)
+  fileSize    Int?         @map("file_size")
+  mimeType    String?      @map("mime_type") @db.VarChar(100)
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  placement SiwesPlacement @relation(fields: [placementId], references: [id], onDelete: Cascade)
+
+  @@index([placementId])
+  @@map("siwes_documents")
+}
+
+// ── PHASE 9: GITHUB & DEVELOPER PORTFOLIO ────────────────────────────────────
+
+model UserGithubProfile {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  userId           String    @unique @map("user_id") @db.VarChar(36)
+  githubUsername   String    @map("github_username") @db.VarChar(100)
+  avatarUrl        String?   @map("avatar_url") @db.VarChar(500)
+  bio              String?   @db.Text
+  publicReposCount Int       @default(0) @map("public_repos_count")
+  followersCount   Int       @default(0) @map("followers_count")
+  profileUrl       String?   @map("profile_url") @db.VarChar(500)
+  isConnected      Boolean   @default(true) @map("is_connected")
+  showOnProfile    Boolean   @default(true) @map("show_on_profile")
+  showRepositories Boolean   @default(true) @map("show_repositories")
+  showActivity     Boolean   @default(true) @map("show_activity")
+  cachedRepos      Json?     @map("cached_repos")
+  lastSyncedAt     DateTime? @map("last_synced_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_github_profiles")
+}
+
+// ── PHASE 9: FCI SKILL ASSESSMENT CENTER ─────────────────────────────────────
+
+model SkillAssessment {
+  id                     String               @id @default(uuid()) @db.VarChar(36)
+  title                  String               @db.VarChar(255)
+  slug                   String               @unique @db.VarChar(255)
+  description            String               @db.Text
+  skillId                String?              @map("skill_id") @db.VarChar(36)
+  category               String               @db.VarChar(100)
+  difficulty             AssessmentDifficulty @default(INTERMEDIATE)
+  timeLimitMinutes       Int                  @default(15) @map("time_limit_minutes")
+  passingScorePercentage Int                  @default(70) @map("passing_score_percentage")
+  status                 AssessmentStatus     @default(PUBLISHED)
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @updatedAt @map("updated_at")
+
+  skill     Skill?               @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  questions AssessmentQuestion[]
+  attempts  AssessmentAttempt[]
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([status])
+  @@map("skill_assessments")
+}
+
+model AssessmentQuestion {
+  id                 String                 @id @default(uuid()) @db.VarChar(36)
+  assessmentId       String                 @map("assessment_id") @db.VarChar(36)
+  questionText       String                 @map("question_text") @db.Text
+  questionType       AssessmentQuestionType @default(MULTIPLE_CHOICE) @map("question_type")
+  options            Json                   // string[] of options
+  correctOptionIndex Int                    @map("correct_option_index")
+  explanation        String?                @db.Text
+  points             Int                    @default(10)
+  position           Int                    @default(0)
+
+  assessment SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId, position])
+  @@map("assessment_questions")
+}
+
+model AssessmentAttempt {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  assessmentId     String    @map("assessment_id") @db.VarChar(36)
+  userId           String    @map("user_id") @db.VarChar(36)
+  scorePercentage  Int       @map("score_percentage")
+  isPassed         Boolean   @map("is_passed")
+  timeSpentSeconds Int       @map("time_spent_seconds")
+  answersSubmitted Json?     @map("answers_submitted")
+  completedAt      DateTime  @default(now()) @map("completed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  assessment SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId])
+  @@index([userId])
+  @@map("assessment_attempts")
+}
+
+// ── PHASE 10: STUDENT FREELANCE MARKETPLACE ──────────────────────────────────
+
+model MarketplaceService {
+  id            String             @id @default(uuid()) @db.VarChar(36)
+  slug          String             @unique @db.VarChar(255)
+  title         String             @db.VarChar(255)
+  description   String             @db.Text
+  category      String             @db.VarChar(100)
+  skills        Json?
+  ownerId       String             @map("owner_id") @db.VarChar(36)
+  pricingType   ServicePricingType @default(FIXED) @map("pricing_type")
+  startingPrice Int?               @map("starting_price") // in NGN
+  deliveryDays  Int?               @map("delivery_days")
+  status        ServiceStatus      @default(ACTIVE)
+  coverImage    String?            @map("cover_image") @db.VarChar(500)
+  viewsCount    Int                @default(0) @map("views_count")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  owner     User                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  inquiries MarketplaceInquiry[]
+
+  @@index([category])
+  @@index([status])
+  @@index([ownerId])
+  @@map("marketplace_services")
+}
+
+model MarketplaceInquiry {
+  id           String        @id @default(uuid()) @db.VarChar(36)
+  serviceId    String        @map("service_id") @db.VarChar(36)
+  clientId     String        @map("client_id") @db.VarChar(36)
+  message      String        @db.Text
+  requirements String?       @db.Text
+  budget       Int?
+  status       InquiryStatus @default(NEW)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  service MarketplaceService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  client  User               @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+  @@index([clientId])
+  @@index([status])
+  @@map("marketplace_inquiries")
+}
+
+// ── PHASE 10: FCI STUDENT VOICE ──────────────────────────────────────────────
+
+model VoicePoll {
+  id          String          @id @default(uuid()) @db.VarChar(36)
+  question    String          @db.VarChar(255)
+  description String?         @db.Text
+  options     Json            // Array of { id: string, text: string }
+  startDate   DateTime?       @map("start_date")
+  endDate     DateTime?       @map("end_date")
+  visibility  String          @default("ALL") @db.VarChar(50)
+  status      VoicePollStatus @default(ACTIVE)
+  createdById String          @map("created_by_id") @db.VarChar(36)
+  isAnonymous Boolean         @default(false) @map("is_anonymous")
+  totalVotes  Int             @default(0) @map("total_votes")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  creator User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  votes   VoicePollVote[]
+
+  @@index([status])
+  @@index([createdById])
+  @@map("voice_polls")
+}
+
+model VoicePollVote {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  pollId      String   @map("poll_id") @db.VarChar(36)
+  userId      String   @map("user_id") @db.VarChar(36)
+  optionIndex Int      @map("option_index")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  poll VoicePoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+  @@index([pollId])
+  @@map("voice_poll_votes")
+}
+
+model VoiceSuggestion {
+  id            String                @id @default(uuid()) @db.VarChar(36)
+  authorId      String                @map("author_id") @db.VarChar(36)
+  title         String                @db.VarChar(255)
+  description   String                @db.Text
+  category      String                @default("GENERAL") @db.VarChar(100)
+  status        VoiceSuggestionStatus @default(SUBMITTED)
+  adminResponse String?               @map("admin_response") @db.Text
+  respondedAt   DateTime?             @map("responded_at")
+  isAnonymous   Boolean               @default(false) @map("is_anonymous")
+  upvotesCount  Int                   @default(0) @map("upvotes_count")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
+
+  author User                  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  votes  VoiceSuggestionVote[]
+
+  @@index([status])
+  @@index([authorId])
+  @@map("voice_suggestions")
+}
+
+model VoiceSuggestionVote {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  suggestionId String   @map("suggestion_id") @db.VarChar(36)
+  userId       String   @map("user_id") @db.VarChar(36)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  suggestion VoiceSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([suggestionId, userId])
+  @@index([suggestionId])
+  @@map("voice_suggestion_votes")
+}
+
+// ── PHASE 11: ANNOUNCEMENT READ RECEIPTS ──────────────────────────────────────
+
+model AnnouncementRead {
+  id             String   @id @default(uuid()) @db.VarChar(36)
+  announcementId String   @map("announcement_id") @db.VarChar(36)
+  userId         String   @map("user_id") @db.VarChar(36)
+  readAt         DateTime @default(now()) @map("read_at")
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([userId])
+  @@map("announcement_reads")
+}
+
+// ── SYSTEM SETTINGS & GLOBAL GOVERNANCE ─────────────────────────────────────
+
+model SystemSetting {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  key       String   @unique @db.VarChar(100)
+  value     String   @db.Text
+  updatedBy String?  @map("updated_by") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}
+
+// ── PASSWORD RESET & OTP VERIFICATION ────────────────────────────────────────
+
+model PasswordResetOtp {
+  id              String    @id @default(uuid()) @db.VarChar(36)
+  userId          String    @map("user_id") @db.VarChar(36)
+  email           String    @db.VarChar(255)
+  otpHash         String    @map("otp_hash") @db.VarChar(255)
+  expiresAt       DateTime  @map("expires_at")
+  attempts        Int       @default(0)
+  maxAttempts     Int       @default(5) @map("max_attempts")
+  consumedAt      DateTime? @map("consumed_at")
+  resetTokenHash  String?   @map("reset_token_hash") @db.VarChar(255)
+  resetExpiresAt  DateTime? @map("reset_expires_at")
+  resetConsumedAt DateTime? @map("reset_consumed_at")
+  ipAddress       String?   @map("ip_address") @db.VarChar(45)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([email])
+  @@index([expiresAt])
+  @@index([resetTokenHash])
+  @@map("password_reset_otps")
+}

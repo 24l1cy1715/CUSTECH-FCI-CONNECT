@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Home",
+    "discover": "Discover",
+    "projects": "Projects",
+    "roommates": "Roommates",
+    "news": "Nyus",
+    "businesses": "Biznes",
+    "events": "Events",
+    "leaderboard": "Leaderboard",
+    "communities": "Clubs & Communities",
+    "mentorship": "Mentorship Hub",
+    "learning": "Study & Learning Hub",
+    "project_lab": "Project Lab",
+    "digital_id": "Digital FCI ID",
+    "opportunities": "Opportunities",
+    "opportunity_tracker": "Opportunity Tracker",
+    "copilot": "FCI Copilot",
+    "achievements": "Achievements",
+    "portfolio": "Digital Portfolio",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "admin": "Admin",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "hero": {
+    "headline": "CONNECT. BUILD. DISCOVER.",
+    "subheadline": "One digital community for FCI students for CUSTECH.",
+    "cta_explore": "Explore FCI",
+    "cta_join": "Join the Community"
+  },
+  "common": {
+    "loading": "E dey load...",
+    "error": "Sometin don go wrong. Try again.",
+    "empty": "Nothing dey here yet.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "back": "Back",
+    "read_more": "Read more",
+    "see_all": "See all",
+    "not_found": "Page no dey",
+    "network_error": "Network error. Check your connection."
+  },
+  "auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Sign in to your FCI Connect account",
+    "register_title": "Join FCI Connect",
+    "register_subtitle": "Create your account and join the community",
+    "email": "Email address",
+    "password": "Password",
+    "login_btn": "Sign in",
+    "register_btn": "Create account",
+    "google_btn": "Continue with Google",
+    "forgot_password": "You forget your password?",
+    "no_account": "You never get account?",
+    "have_account": "You don get account already?",
+    "sign_up": "Sign up",
+    "sign_in": "Sign in"
+  },
+  "copilot": {
+    "title": "FCI Personal Copilot",
+    "subtitle": "Your AI school advisor, skill mentor, and career guide",
+    "placeholder": "Ask FCI Copilot anything about courses, skills, projects, or opportunities...",
+    "send": "Send Message",
+    "suggested_title": "Things you fit ask",
+    "disclaimer": "FCI Copilot na AI helper. Confirm important matter with your HOD or dept advisor."
+  },
+  "achievements": {
+    "title": "Achievements & Reputation",
+    "subtitle": "See all your verified badges, school awards, and faculty rank",
+    "submit_evidence": "Submit Proof",
+    "level": "Reputation Level",
+    "points": "Reputation Points",
+    "verified": "Verified",
+    "pending": "Under Review"
+  }
+}

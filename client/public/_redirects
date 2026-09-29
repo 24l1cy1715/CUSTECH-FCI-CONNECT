@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA Redirects Rule
+# Rewrites all client-side navigation paths to index.html with HTTP 200
+/*    /index.html   200
