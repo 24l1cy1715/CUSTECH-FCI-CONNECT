@@ -26,6 +26,7 @@ import announcementRouter from './announcement.routes';
 import intelligenceRouter from './intelligence.routes';
 import { systemRouter } from './system.routes';
 import { profileRouter } from './profile.routes';
+import projectsRouter from './projects.routes';
 
 export const apiRouter = Router();
 
@@ -39,6 +40,8 @@ apiRouter.use('/system', systemRouter);
 // Auth & Admin routes
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/admin', adminRouter);
+apiRouter.use('/super-admin', adminRouter);
+
 
 // Profile & Account Management
 apiRouter.use('/profile', profileRouter);
@@ -71,7 +74,8 @@ apiRouter.use('/learning', learningRouter);
 apiRouter.use('/digital-id', digitalIdRouter);
 apiRouter.use('/verify', publicVerifyRouter);
 
-// Phase 7: FCI Project Lab & Advanced Opportunity Tracker
+// Phase 7: FCI Project Lab & Student Project Showcase & Advanced Opportunity Tracker
+apiRouter.use('/projects', projectsRouter);
 apiRouter.use('/project-lab', projectLabRouter);
 apiRouter.use('/opportunities', opportunityTrackerRouter);
 

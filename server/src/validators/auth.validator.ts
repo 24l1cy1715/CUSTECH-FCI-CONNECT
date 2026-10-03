@@ -29,6 +29,11 @@ export const registerSchema = z.object({
       'LIBRARY_INFORMATION_SCIENCE',
     ]),
     level: z.enum(['LEVEL_100', 'LEVEL_200', 'LEVEL_300', 'LEVEL_400', 'LEVEL_500', 'PGD', 'MSC', 'PHD']).default('LEVEL_100'),
+    role: z.undefined().optional(),
+    roles: z.undefined().optional(),
+  }).refine((data: any) => !data.role && !data.roles, {
+    message: 'Client role specification is strictly prohibited',
+    path: ['role'],
   }),
 });
 
@@ -36,8 +41,14 @@ export const loginSchema = z.object({
   body: z.object({
     email: z.string().email('Invalid email address').toLowerCase().trim(),
     password: z.string().min(1, 'Password is required'),
+    role: z.undefined().optional(),
+    roles: z.undefined().optional(),
+  }).refine((data: any) => !data.role && !data.roles, {
+    message: 'Client role specification is strictly prohibited',
+    path: ['role'],
   }),
 });
+
 
 export const forgotPasswordSchema = z.object({
   body: z.object({

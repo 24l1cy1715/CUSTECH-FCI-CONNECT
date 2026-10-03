@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { hasAnalyticsConsent } from '@/store/consentStore';
 
 export type AnalyticsEventName =
   | 'page_view'
@@ -66,6 +67,11 @@ function sanitizePayload(data: AnalyticsPayload): AnalyticsPayload {
  */
 export const analytics = {
   track: (event: AnalyticsEventName, data: AnalyticsPayload = {}): void => {
+    // Only track if user has explicitly granted analytics consent
+    if (!hasAnalyticsConsent()) {
+      return;
+    }
+
     const cleanData = sanitizePayload(data);
     const entry = { event, data: cleanData, ts: Date.now() };
 

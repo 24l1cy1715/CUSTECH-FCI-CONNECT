@@ -39,7 +39,8 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const { theme, setTheme, setLanguage } = useUIStore();
   const { user, isAuthenticated, logout } = useAuthStore();
-  const isAdmin = user?.roles?.includes('ADMIN') || user?.roles?.includes('SUPER_ADMIN') || user?.email === 'admin@custech.edu.ng';
+  const isSuperAdmin = Boolean(user?.roles?.includes('SUPER_ADMIN'));
+
 
   // State management
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -684,7 +685,7 @@ export const Navbar: React.FC = () => {
               </motion.button>
 
               {/* Super Admin Badge (Direct Link for Admins) */}
-              {isAuthenticated && isAdmin && (
+              {isAuthenticated && isSuperAdmin && (
                 <Link
                   to="/admin"
                   className="hidden min-[1360px]:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-accent/15 border border-accent/40 text-accent hover:bg-accent/25 transition-all shadow-xs"
@@ -743,7 +744,7 @@ export const Navbar: React.FC = () => {
                           )}
                         </div>
 
-                        {isAdmin && (
+                        {isSuperAdmin && (
                           <Link
                             to="/admin"
                             onClick={() => setUserOpen(false)}
@@ -753,6 +754,7 @@ export const Navbar: React.FC = () => {
                             Super Admin Console
                           </Link>
                         )}
+
 
                         <div className="space-y-0.5">
                           {[
@@ -919,7 +921,7 @@ export const Navbar: React.FC = () => {
                 )}
 
                 {/* Admin Quick Entry */}
-                {isAuthenticated && isAdmin && (
+                {isAuthenticated && isSuperAdmin && (
                   <Link
                     to="/admin"
                     onClick={() => setMobileOpen(false)}
@@ -934,6 +936,7 @@ export const Navbar: React.FC = () => {
                     </span>
                   </Link>
                 )}
+
 
                 {/* Accordion Navigation Groups */}
                 <nav className="space-y-1.5" aria-label="Mobile Navigation">

@@ -84,54 +84,27 @@ export const AdminPortalPage: React.FC = () => {
     }
   }, [location.pathname, location.search, setActiveTab]);
 
-  const normalizedEmail = user?.email?.toLowerCase().trim() || '';
-  const isSuperAdmin =
-    hasAnyRole(['SUPER_ADMIN', 'ADMIN']) ||
-    user?.roles?.includes('SUPER_ADMIN') ||
-    user?.roles?.includes('ADMIN') ||
-    normalizedEmail === 'admin@custech.edu.ng' ||
-    normalizedEmail.includes('admin') ||
-    user?.profile?.username === 'fci_admin';
-
-  // Demo auto-login shortcut for immediate evaluation
-  const handleAutoAdminLogin = () => {
-    setUser({
-      id: 'usr-admin-seed',
-      email: 'admin@custech.edu.ng',
-      profile: {
-        id: 'p-admin',
-        username: 'fci_admin',
-        fullName: 'Prof. S. O. Jimoh',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-        department: 'CYBER_SECURITY',
-        level: 'Staff / Administrator',
-        communityPoints: 5000,
-      },
-      roles: ['SUPER_ADMIN', 'ADMIN'],
-    });
-    toast.success('Authenticated as Prof. S. O. Jimoh (Super Admin)');
-  };
+  const isSuperAdmin = Boolean(user?.roles?.includes('SUPER_ADMIN'));
 
   // ── Access Denied / Clearance Check Screen ──
   if (!isAuthenticated || !isSuperAdmin) {
     return (
       <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50">
         <Card className="max-w-md w-full p-6 sm:p-8 text-center space-y-5 border border-slate-200 shadow-xl bg-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-600 to-amber-600 rounded-t-2xl" />
           <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto border border-rose-200">
-            <Lock className="w-8 h-8 animate-bounce" />
+            <Lock className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-widest text-rose-600 uppercase px-3 py-1 rounded-full bg-rose-50 border border-rose-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
               Clearance Level 5 Required
             </span>
             <h1 className="font-display font-extrabold text-2xl text-slate-900 tracking-tight">
               CUSTECH FCI Command Center
             </h1>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Restricted executive interface for verified Faculty of Computing and Informatics administrators, deans, and moderators.
+              Restricted executive interface strictly for verified Faculty of Computing and Informatics Super Administrators.
             </p>
           </div>
 
@@ -140,23 +113,19 @@ export const AdminPortalPage: React.FC = () => {
               <span>Active Session:</span>
               <span className="text-[10px] text-rose-500 font-bold uppercase">Restricted</span>
             </div>
-            <div className="text-slate-800 font-bold truncate">{user?.email || 'Unauthenticated Guest'}</div>
-            <div className="text-[11px] text-slate-400">Target Protocol: TLS 1.3 / FCI-RBAC-01</div>
+            <div className="text-slate-800 font-bold truncate">{user?.email || 'Unauthenticated'}</div>
+            <div className="text-[11px] text-slate-400">Assigned Roles: {user?.roles?.join(', ') || 'NONE'}</div>
           </div>
 
           <div className="space-y-2 pt-2">
-            <Button
-              variant="accent"
-              className="w-full font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 text-white"
-              onClick={handleAutoAdminLogin}
-              leftIcon={<ShieldCheck className="w-4 h-4" />}
-            >
-              Authenticate as Super Admin (Prof. Jimoh)
-            </Button>
-
             <Link to="/dashboard" className="block w-full">
-              <Button variant="ghost" className="w-full text-xs text-slate-500 hover:bg-slate-50">
+              <Button variant="accent" className="w-full">
                 Return to Student Dashboard
+              </Button>
+            </Link>
+            <Link to="/" className="block w-full">
+              <Button variant="ghost" className="w-full text-xs text-slate-500 hover:bg-slate-50">
+                Return to Platform Home
               </Button>
             </Link>
           </div>
@@ -164,6 +133,7 @@ export const AdminPortalPage: React.FC = () => {
       </div>
     );
   }
+
 
   const pendingProjectsCount = projects.filter((p) => p.status === 'PENDING').length;
   const pendingBusinessesCount = businesses.filter((b) => b.status === 'PENDING').length;

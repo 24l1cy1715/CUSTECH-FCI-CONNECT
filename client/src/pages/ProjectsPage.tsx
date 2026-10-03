@@ -13,16 +13,27 @@ import {
   Bot,
   ArrowRight,
 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { Badge } from '@/components/common/Badge';
 import { MOCK_PROJECTS } from '@/data/mockData';
 import { ProjectCategory, Project } from '@/types';
+import { projectsApi } from '@/api/projectsApi';
 
 export const ProjectsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
+
+  const { data: apiProjectsData } = useQuery({
+    queryKey: ['projects', selectedCategory, searchTerm],
+    queryFn: () =>
+      projectsApi.listProjects({
+        category: selectedCategory === 'ALL' ? undefined : selectedCategory,
+        search: searchTerm || undefined,
+      }),
+  });
 
   const categories: ProjectCategory[] = [
     'WEB',
@@ -36,35 +47,44 @@ export const ProjectsPage: React.FC = () => {
     'SOFTWARE_ENGINEERING',
   ];
 
+  const liveProjects: Project[] = apiProjectsData?.data || [];
+
+  const allProjects = useMemo(() => {
+    const existingSlugs = new Set(liveProjects.map((p) => p.slug));
+    const extraMock = MOCK_PROJECTS.filter((p) => !existingSlugs.has(p.slug));
+    return [...liveProjects, ...extraMock];
+  }, [liveProjects]);
+
+  const likeMutation = useMutation({
+    mutationFn: (id: string) => projectsApi.likeProject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+
   const handleLike = (id: string) => {
-    setProjects((prev) =>
-      prev.map((proj) => {
-        if (proj.id === id) {
-          const isLiked = !proj.isLiked;
-          return {
-            ...proj,
-            isLiked,
-            likesCount: isLiked ? proj.likesCount + 1 : proj.likesCount - 1,
-          };
-        }
-        return proj;
-      })
-    );
+    likeMutation.mutate(id);
   };
 
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
+    return allProjects.filter((project) => {
       const matchesSearch =
         project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.technologies.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+        (project.technologies || []).some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
 
       const matchesCategory =
-        selectedCategory === 'ALL' || project.category === selectedCategory;
+        selectedCategory === 'ALL' ||
+        project.category === selectedCategory ||
+        (selectedCategory === 'WEB' && (project.category as string) === 'WEB_DEVELOPMENT') ||
+        (selectedCategory === 'MOBILE' && (project.category as string) === 'MOBILE_DEVELOPMENT') ||
+        (selectedCategory === 'AI' && (project.category as string) === 'ARTIFICIAL_INTELLIGENCE') ||
+        (selectedCategory === 'ML' && (project.category as string) === 'MACHINE_LEARNING') ||
+        (selectedCategory === 'CLOUD' && (project.category as string) === 'CLOUD_COMPUTING');
 
       return matchesSearch && matchesCategory;
     });
-  }, [projects, searchTerm, selectedCategory]);
+  }, [allProjects, searchTerm, selectedCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">

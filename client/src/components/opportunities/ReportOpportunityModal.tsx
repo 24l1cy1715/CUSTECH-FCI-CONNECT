@@ -44,7 +44,7 @@ export const ReportOpportunityModal: React.FC<ReportOpportunityModalProps> = ({
   const onSubmit = async (data: ReportFormData) => {
     try {
       setIsSubmitting(true);
-      const res = await reportOpportunity(opportunityId, data);
+      const res = await reportOpportunity(opportunityId, data as any);
       toast.success(res.message || 'Report submitted to moderators.');
       reset();
       onClose();

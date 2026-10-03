@@ -103,13 +103,13 @@ export class SystemSettingService {
           entityType: 'SYSTEM_SETTING',
           entityId: this.LOCKDOWN_KEY,
           ipAddress: ipAddress || '127.0.0.1',
-          metadata: {
+          metadata: JSON.stringify({
             details: enabled
               ? `Super Admin enabled Global Student Portal Lockdown. Notice: "${resolvedMessage}"`
               : 'Super Admin disabled Global Student Portal Lockdown. Student access restored.',
             severity: enabled ? 'CRITICAL' : 'INFO',
             notice: resolvedMessage,
-          },
+          }),
         },
       });
     } catch (auditError) {

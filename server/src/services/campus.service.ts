@@ -49,7 +49,7 @@ export const DEFAULT_CAMPUS_LOCATIONS = [
     building: 'FCI Complex',
     floor: 'Ground Floor',
     room: 'Lab 1',
-    openingHours: {
+    openingHours: JSON.stringify({
       monday: '8:00 AM - 8:00 PM',
       tuesday: '8:00 AM - 8:00 PM',
       wednesday: '8:00 AM - 8:00 PM',
@@ -57,7 +57,7 @@ export const DEFAULT_CAMPUS_LOCATIONS = [
       friday: '8:00 AM - 6:00 PM',
       saturday: '9:00 AM - 4:00 PM',
       sunday: 'Closed',
-    },
+    }),
   },
   {
     name: 'Advanced Research Laboratory',

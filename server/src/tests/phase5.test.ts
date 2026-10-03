@@ -203,7 +203,8 @@ test('Phase 5 Mentorship Lifecycle — Request creation, duplicate prevention, a
       userId: mentorUser.id,
       headline: 'Fullstack Systems Architect',
       bio: 'Mentoring in TypeScript, Distributed Systems, and Microservices.',
-      areas: ['Web Development', 'Python', 'Career Development'],
+      areas: JSON.stringify(['Web Development', 'Python', 'Career Development']),
+
       availability: 'Weekends',
       maxMentees: 5,
       sessionFormat: MentorshipSessionFormat.MIXED,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
   MessageSquare,
   Vote,
@@ -20,7 +21,8 @@ import { useAuthStore } from '../store/authStore';
 
 export const StudentVoicePage: React.FC = () => {
   const queryClient = useQueryClient();
-  const { user } = useAuthStore();
+  const { user, hasAnyRole } = useAuthStore();
+  const canCreatePoll = hasAnyRole(['ADMIN', 'SUPER_ADMIN', 'MODERATOR', 'EDITOR']);
 
   const [activeTab, setActiveTab] = useState<'polls' | 'suggestions'>('polls');
   const [showPollModal, setShowPollModal] = useState(false);
@@ -61,7 +63,12 @@ export const StudentVoicePage: React.FC = () => {
     mutationFn: ({ pollId, optionIndex }: { pollId: string; optionIndex: number }) =>
       voiceApi.votePoll(pollId, optionIndex),
     onSuccess: () => {
+      toast.success('Your vote has been counted!');
       queryClient.invalidateQueries({ queryKey: ['voicePolls'] });
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.message || 'Failed to submit vote';
+      toast.error(msg);
     },
   });
 
@@ -70,23 +77,44 @@ export const StudentVoicePage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['voiceSuggestions'] });
     },
+    onError: (err: any) => {
+      const msg = err.response?.data?.message || 'Failed to upvote suggestion';
+      toast.error(msg);
+    },
   });
 
   const createPollMutation = useMutation({
-    mutationFn: (body: any) => voiceApi.createPoll(body),
+    mutationFn: (body: any) =>
+      voiceApi.createPoll({
+        question: body.title,
+        title: body.title,
+        description: body.description,
+        category: body.category,
+        options: body.options.filter((o: string) => o.trim().length > 0),
+      }),
     onSuccess: () => {
+      toast.success('Faculty poll created successfully!');
       queryClient.invalidateQueries({ queryKey: ['voicePolls'] });
       setShowPollModal(false);
       setPollForm({ title: '', description: '', category: 'GENERAL', options: ['', ''] });
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.errors?.[0]?.message || err.response?.data?.message || 'Failed to publish poll';
+      toast.error(msg);
     },
   });
 
   const createSuggestionMutation = useMutation({
     mutationFn: (body: any) => voiceApi.createSuggestion(body),
     onSuccess: () => {
+      toast.success('Community suggestion posted!');
       queryClient.invalidateQueries({ queryKey: ['voiceSuggestions'] });
       setShowSuggestionModal(false);
       setSuggestionForm({ title: '', description: '', category: 'CAMPUS_LIFE', isAnonymous: false });
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.errors?.[0]?.message || err.response?.data?.message || 'Failed to submit suggestion';
+      toast.error(msg);
     },
   });
 
@@ -132,13 +160,15 @@ export const StudentVoicePage: React.FC = () => {
               <Lightbulb className="w-4 h-4 text-amber-400" />
               Submit Suggestion
             </button>
-            <button
-              onClick={() => setShowPollModal(true)}
-              className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-semibold transition flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Create Poll
-            </button>
+            {canCreatePoll && (
+              <button
+                onClick={() => setShowPollModal(true)}
+                className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-semibold transition flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Create Poll
+              </button>
+            )}
           </div>
         </div>
 
@@ -184,14 +214,23 @@ export const StudentVoicePage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {polls.map((poll) => {
-                  let options: string[] = [];
+                  let rawOptions: any[] = [];
                   try {
-                    options = typeof poll.options === 'string' ? JSON.parse(poll.options) : poll.options;
+                    rawOptions = typeof poll.options === 'string' ? JSON.parse(poll.options) : (poll.options || []);
                   } catch {
-                    options = [];
+                    rawOptions = [];
                   }
 
-                  const hasVoted = poll.hasVoted;
+                  const options: string[] = Array.isArray(rawOptions)
+                    ? rawOptions.map((opt: any) => (typeof opt === 'string' ? opt : opt?.text || ''))
+                    : [];
+
+                  const hasVoted = Boolean(
+                    poll.hasVoted ||
+                    (poll.userVoteIndex !== null && poll.userVoteIndex !== undefined) ||
+                    (poll.userVotedOption !== null && poll.userVotedOption !== undefined)
+                  );
+                  const userChoice = poll.userVoteIndex ?? poll.userVotedOption ?? null;
                   const totalVotes = poll.totalVotes || 0;
 
                   return (
@@ -202,7 +241,7 @@ export const StudentVoicePage: React.FC = () => {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-400 border border-amber-400/20">
-                            {poll.category}
+                            {poll.category || 'FACULTY INITIATIVE'}
                           </span>
                           <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
                             <Clock className="w-3.5 h-3.5" />
@@ -210,7 +249,7 @@ export const StudentVoicePage: React.FC = () => {
                           </span>
                         </div>
 
-                        <h3 className="text-base font-bold text-white leading-snug">{poll.title}</h3>
+                        <h3 className="text-base font-bold text-white leading-snug">{poll.title || poll.question}</h3>
                         {poll.description && (
                           <p className="text-xs text-slate-400 leading-relaxed">{poll.description}</p>
                         )}
@@ -218,10 +257,13 @@ export const StudentVoicePage: React.FC = () => {
 
                       {/* Poll Options */}
                       <div className="space-y-2.5 pt-2">
-                        {options.map((opt, optIdx) => {
-                          const optionVotes = poll.votes?.filter((v) => v.optionIndex === optIdx).length || 0;
+                        {options.map((optText, optIdx) => {
+                          const optionVotes =
+                            poll.voteBreakdown?.[optIdx] ??
+                            poll.votes?.filter((v) => v.optionIndex === optIdx).length ??
+                            0;
                           const percent = totalVotes > 0 ? Math.round((optionVotes / totalVotes) * 100) : 0;
-                          const isUserChoice = poll.userVoteIndex === optIdx;
+                          const isUserChoice = userChoice === optIdx;
 
                           return (
                             <button
@@ -231,7 +273,9 @@ export const StudentVoicePage: React.FC = () => {
                               className={`w-full text-left p-3 rounded-xl border relative overflow-hidden transition ${
                                 isUserChoice
                                   ? 'border-amber-400 bg-amber-500/10'
-                                  : 'border-slate-800 hover:border-slate-700 bg-slate-900/40'
+                                  : hasVoted
+                                  ? 'border-slate-800 bg-slate-900/30 cursor-default'
+                                  : 'border-slate-800 hover:border-slate-700 bg-slate-900/40 cursor-pointer'
                               }`}
                             >
                               {/* Background percentage fill if voted */}
@@ -245,7 +289,7 @@ export const StudentVoicePage: React.FC = () => {
                               <div className="relative flex justify-between items-center text-xs">
                                 <span className="font-medium text-slate-200 flex items-center gap-2">
                                   {isUserChoice && <CheckCircle className="w-3.5 h-3.5 text-amber-400" />}
-                                  {opt}
+                                  {optText}
                                 </span>
                                 {hasVoted && (
                                   <span className="font-mono text-slate-400">

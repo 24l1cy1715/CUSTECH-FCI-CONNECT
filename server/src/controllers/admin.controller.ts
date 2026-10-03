@@ -152,6 +152,21 @@ export class AdminController {
         }
       }
 
+      // Authorize that actor possesses SUPER_ADMIN in verified roles
+      if (!req.user || !req.user.roles.includes('SUPER_ADMIN')) {
+        throw ApiError.forbidden('Only verified Super Administrators can modify roles');
+      }
+
+      // Check target user existence
+      const targetUser = await prisma.user.findUnique({
+        where: { id },
+        select: { id: true, email: true },
+      });
+
+      if (!targetUser) {
+        throw ApiError.notFound('Target user not found');
+      }
+
       if (action === 'ADD') {
         await prisma.userRole.upsert({
           where: {
@@ -169,7 +184,7 @@ export class AdminController {
         });
       }
 
-      // Log action
+      // Log action to security audit trail
       if (req.user) {
         await prisma.auditLog.create({
           data: {
@@ -177,12 +192,22 @@ export class AdminController {
             action: `ROLE_${action}`,
             entityType: 'USER',
             entityId: id,
-            metadata: { targetRole: roleName },
+            ipAddress: req.ip || (req.socket?.remoteAddress as string) || 'unknown',
+            metadata: JSON.stringify({
+              targetUserId: id,
+              targetUserEmail: targetUser.email,
+              targetRole: roleName,
+              action,
+              timestamp: new Date().toISOString(),
+            }),
           },
-        }).catch(() => {});
+        }).catch((err) => {
+          console.error('Failed to log role change audit:', err);
+        });
       }
 
       res.json({ success: true, message: `Role updated successfully` });
+
     } catch (error) {
       next(error);
     }
@@ -218,9 +243,10 @@ export class AdminController {
             action: 'ADJUST_POINTS',
             entityType: 'USER',
             entityId: id,
-            metadata: { delta: pointsDelta, reason, newBalance: updated.communityPoints },
+            metadata: JSON.stringify({ delta: pointsDelta, reason, newBalance: updated.communityPoints }),
           },
         }).catch(() => {});
+
       }
 
       res.json({ success: true, data: updated });
@@ -283,7 +309,7 @@ export class AdminController {
             action: `PROJECT_${status}`,
             entityType: 'PROJECT',
             entityId: id,
-            metadata: { title: project.title, pointsAwarded: status === 'APPROVED' ? pointsReward : 0 },
+            metadata: JSON.stringify({ title: project.title, pointsAwarded: status === 'APPROVED' ? pointsReward : 0 }),
           },
         }).catch(() => {});
       }
@@ -333,10 +359,11 @@ export class AdminController {
             action: `BUSINESS_${status}`,
             entityType: 'BUSINESS',
             entityId: id,
-            metadata: { name: business.name },
+            metadata: JSON.stringify({ name: business.name }),
           },
         }).catch(() => {});
       }
+
 
       res.json({ success: true, data: business });
     } catch (error) {
@@ -414,12 +441,17 @@ export class AdminController {
         take: 100,
         include: {
           actor: {
-            include: { profile: true },
+            select: {
+              id: true,
+              email: true,
+              profile: true,
+            },
           },
         },
       });
 
       res.json({ success: true, data: logs });
+
     } catch (error) {
       next(error);
     }

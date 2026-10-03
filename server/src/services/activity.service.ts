@@ -23,7 +23,11 @@ export async function createActivity(input: CreateActivityInput) {
       entityId: input.entityId,
       title: input.title,
       description: input.description,
-      metadata: input.metadata as Prisma.InputJsonValue,
+      metadata: input.metadata
+        ? typeof input.metadata === 'string'
+          ? input.metadata
+          : JSON.stringify(input.metadata)
+        : null,
       imageUrl: input.imageUrl,
       visibility: input.visibility ?? ActivityVisibility.PUBLIC,
     },

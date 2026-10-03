@@ -106,6 +106,10 @@ export class AuthService {
       throw ApiError.unauthorized('Invalid email or password');
     }
 
+    if (!user.isActive) {
+      throw ApiError.forbidden('Your account has been deactivated. Please contact faculty admin.');
+    }
+
     if (user.isSuspended) {
       throw ApiError.forbidden('Your account has been suspended. Please contact faculty admin.');
     }
@@ -116,6 +120,102 @@ export class AuthService {
     }
 
     const roles = user.userRoles.map((r: { role: { name: string } }) => r.role.name);
+    const tokens = this.generateTokens(user.id, user.email, roles);
+
+    return { user, tokens, roles };
+  }
+
+  /**
+   * Dedicated Super Admin Login flow.
+   * Verifies credentials, account existence, active status, and explicitly checks
+   * that the user possesses the SUPER_ADMIN role in the database.
+   * Emits audit logs for both success and unauthorized student/non-admin attempts.
+   */
+  static async adminLogin(email: string, password: string, ipAddress?: string) {
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      include: {
+        profile: true,
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    // Check account existence and password hash presence
+    if (!user || !user.passwordHash) {
+      throw ApiError.unauthorized('Invalid administrative credentials');
+    }
+
+    // Check account active state
+    if (!user.isActive) {
+      throw ApiError.forbidden('Administrative account is currently deactivated');
+    }
+
+    // Check suspension
+    if (user.isSuspended) {
+      throw ApiError.forbidden('Administrative account has been suspended');
+    }
+
+    // Verify password securely
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
+      throw ApiError.unauthorized('Invalid administrative credentials');
+    }
+
+    // Resolve authoritative roles from database
+    const roles = user.userRoles.map((r: { role: { name: string } }) => r.role.name);
+
+    // Enforce SUPER_ADMIN clearance
+    if (!roles.includes('SUPER_ADMIN')) {
+      // Security event: Student or unauthorized non-Super-Admin attempting Super Admin authentication
+      try {
+        await prisma.auditLog.create({
+          data: {
+            actorId: user.id,
+            action: 'STUDENT_ATTEMPTED_SUPER_ADMIN_LOGIN',
+            entityType: 'AUTH_GATEWAY',
+            entityId: user.email,
+            ipAddress: ipAddress || 'unknown',
+            metadata: JSON.stringify({
+              email: user.email,
+              assignedRoles: roles,
+              attemptedPortal: 'SUPER_ADMIN_PORTAL',
+              timestamp: new Date().toISOString(),
+            }),
+          },
+        });
+      } catch (logErr) {
+        console.error('Failed to log admin login violation:', logErr);
+      }
+
+      throw ApiError.forbidden('Access denied. This account does not possess Super Admin privileges.');
+    }
+
+    // Successful Super Admin login
+    try {
+      await prisma.auditLog.create({
+        data: {
+          actorId: user.id,
+          action: 'SUCCESSFUL_SUPER_ADMIN_LOGIN',
+          entityType: 'AUTH_GATEWAY',
+          entityId: user.email,
+          ipAddress: ipAddress || 'unknown',
+          metadata: JSON.stringify({
+            email: user.email,
+            roles,
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      });
+    } catch (logErr) {
+      console.error('Failed to log successful admin login:', logErr);
+    }
+
     const tokens = this.generateTokens(user.id, user.email, roles);
 
     return { user, tokens, roles };
@@ -146,7 +246,7 @@ export class AuthService {
       },
     });
 
-    if (!user) return null;
+    if (!user || !user.isActive || user.isSuspended) return null;
 
     const roles = user.userRoles.map((r: { role: { name: string } }) => r.role.name);
 
@@ -157,6 +257,198 @@ export class AuthService {
       roles,
     };
   }
+
+  /**
+   * Secure Google Authentication handler.
+   * - Verifies Google identity and email verification status.
+   * - Links existing accounts by email without creating duplicates.
+   * - PRESERVES existing database roles for existing users (including SUPER_ADMIN).
+   * - NEVER grants SUPER_ADMIN or elevated privileges to newly registered users (defaults strictly to STUDENT).
+   * - Emits security audit logs for all login and registration events.
+   */
+  static async handleGoogleAuth(input: {
+    googleId: string;
+    email: string;
+    fullName?: string;
+    avatarUrl?: string | null;
+    emailVerified: boolean;
+    ipAddress?: string;
+  }) {
+    if (!input.googleId || !input.email) {
+      throw ApiError.badRequest('Missing verified Google identity information');
+    }
+
+    if (!input.emailVerified) {
+      throw ApiError.forbidden('Google account email is not verified by Google');
+    }
+
+    const normalizedEmail = input.email.trim().toLowerCase();
+
+    // 1. Check for existing user by Google ID or normalized Email
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { googleId: input.googleId },
+          { email: normalizedEmail },
+        ],
+      },
+      include: {
+        profile: true,
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    // 2. Existing User Flow: Preserve roles, verify active status, safely link Google identity
+    if (user) {
+      if (!user.isActive) {
+        throw ApiError.forbidden('Your account has been deactivated. Please contact faculty admin.');
+      }
+
+      if (user.isSuspended) {
+        throw ApiError.forbidden('Your account has been suspended. Please contact faculty admin.');
+      }
+
+      // Link googleId or mark emailVerified if not already done
+      const needsUserUpdate = user.googleId !== input.googleId || !user.emailVerified;
+      if (needsUserUpdate) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            googleId: input.googleId,
+            emailVerified: true,
+          },
+          include: {
+            profile: true,
+            userRoles: {
+              include: {
+                role: true,
+              },
+            },
+          },
+        });
+      }
+
+      // Safely update profile avatar if existing profile has no avatar
+      if (user.profile && !user.profile.avatarUrl && input.avatarUrl) {
+        await prisma.profile.update({
+          where: { id: user.profile.id },
+          data: { avatarUrl: input.avatarUrl },
+        });
+        user.profile.avatarUrl = input.avatarUrl;
+      }
+
+      // Authoritative roles from the database (Preserves existing role, whether STUDENT or SUPER_ADMIN)
+      const roles = user.userRoles.map((r: { role: { name: string } }) => r.role.name);
+
+      // Audit Log for existing user Google login
+      try {
+        await prisma.auditLog.create({
+          data: {
+            actorId: user.id,
+            action: 'GOOGLE_AUTH_LOGIN',
+            entityType: 'AUTH_GATEWAY',
+            entityId: user.email,
+            ipAddress: input.ipAddress || 'unknown',
+            metadata: JSON.stringify({
+              email: user.email,
+              googleId: input.googleId,
+              roles,
+              isExistingUser: true,
+              timestamp: new Date().toISOString(),
+            }),
+          },
+        });
+      } catch (logErr) {
+        console.error('Failed to log Google auth login event:', logErr);
+      }
+
+      const tokens = this.generateTokens(user.id, user.email, roles);
+      return { user, tokens, roles };
+    }
+
+    // 3. New User Flow: Strictly create as STUDENT in database transaction
+    const newUser = await prisma.$transaction(async (tx) => {
+      // Find the authoritative STUDENT role
+      const studentRole = await tx.role.findUnique({
+        where: { name: 'STUDENT' },
+      });
+
+      if (!studentRole) {
+        throw ApiError.internal('Default STUDENT role not configured in database');
+      }
+
+      // Generate a collision-resistant username
+      const sanitizedBase = normalizedEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') || 'student';
+      let candidateUsername = `${sanitizedBase}_${Math.floor(1000 + Math.random() * 9000)}`;
+      const existingProfile = await tx.profile.findUnique({ where: { username: candidateUsername } });
+      if (existingProfile) {
+        candidateUsername = `${sanitizedBase}_${Date.now().toString().slice(-6)}`;
+      }
+
+      return await tx.user.create({
+        data: {
+          email: normalizedEmail,
+          googleId: input.googleId,
+          emailVerified: true,
+          passwordHash: null, // OAuth-authenticated user
+          isActive: true,
+          isSuspended: false,
+          userRoles: {
+            create: {
+              roleId: studentRole.id,
+            },
+          },
+          profile: {
+            create: {
+              username: candidateUsername,
+              fullName: input.fullName?.trim() || sanitizedBase,
+              avatarUrl: input.avatarUrl || null,
+              communityPoints: 100, // Onboarding community points
+            },
+          },
+        },
+        include: {
+          profile: true,
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    });
+
+    const roles = newUser.userRoles.map((r: { role: { name: string } }) => r.role.name);
+
+    // Audit Log for new Google user creation
+    try {
+      await prisma.auditLog.create({
+        data: {
+          actorId: newUser.id,
+          action: 'GOOGLE_AUTH_REGISTER',
+          entityType: 'AUTH_GATEWAY',
+          entityId: newUser.email,
+          ipAddress: input.ipAddress || 'unknown',
+          metadata: JSON.stringify({
+            email: newUser.email,
+            googleId: input.googleId,
+            assignedRole: 'STUDENT',
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      });
+    } catch (logErr) {
+      console.error('Failed to log Google registration event:', logErr);
+    }
+
+    const tokens = this.generateTokens(newUser.id, newUser.email, roles);
+    return { user: newUser, tokens, roles };
+  }
+
 
   // ───────────────────────────────────────────────────────────────────────────
   // PASSWORD RESET & OTP IMPLEMENTATION
@@ -276,12 +568,13 @@ export class AuthService {
         entityType: 'USER',
         entityId: user.id,
         ipAddress,
-        metadata: {
+        metadata: JSON.stringify({
           email: user.email,
           expiresAt: expiresAt.toISOString(),
-        },
+        }),
       },
     }).catch(() => {});
+
 
     // Periodic background cleanup of expired OTPs older than 24 hours
     this.cleanupExpiredOtps().catch(() => {});
@@ -382,12 +675,13 @@ export class AuthService {
           entityType: 'USER',
           entityId: user.id,
           ipAddress,
-          metadata: {
+          metadata: JSON.stringify({
             attempts: newAttempts,
             exceeded: isExceeded,
-          },
+          }),
         },
       }).catch(() => {});
+
 
       if (isExceeded) {
         throw ApiError.badRequest('Too many incorrect attempts. This OTP has been invalidated. Please request a new code.');

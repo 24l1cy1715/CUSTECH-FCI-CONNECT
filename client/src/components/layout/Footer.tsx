@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Github, Twitter, Linkedin, Mail, MapPin } from "lucide-react";
+import { Github, Twitter, Linkedin, Mail, MapPin, Cookie } from "lucide-react";
 import { DEPARTMENT_LABELS, Department } from "@/types";
+import { useConsentStore } from "@/store/consentStore";
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation();
+  const { openPreferencesModal } = useConsentStore();
 
   const departments: Department[] = [
     "COMPUTER_SCIENCE", "CYBER_SECURITY", "SOFTWARE_ENGINEERING",
@@ -28,6 +30,7 @@ export const Footer: React.FC = () => {
     { href: "https://library.custech.edu.ng", label: "e-Library", external: true },
     { to: "/news?category=Announcements", label: "Academic Calendar" },
     { to: "/privacy", label: "Privacy Policy" },
+    { to: "/cookie-policy", label: "Cookie Policy" },
     { to: "/terms",   label: "Terms of Service" },
   ];
 
@@ -142,7 +145,18 @@ export const Footer: React.FC = () => {
       <div className="border-t border-border py-5 bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col xs:flex-row items-center justify-between gap-3 text-xs text-text-muted text-center xs:text-left">
           <p>© {new Date().getFullYear()} CUSTECH FCI CONNECT. All rights reserved.</p>
-          <p className="hidden sm:block">Designed &amp; engineered with passion by FCI Tech Pioneers</p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={openPreferencesModal}
+              className="inline-flex items-center gap-1 text-text-muted hover:text-accent transition-colors text-xs"
+              aria-label="Open cookie preferences"
+            >
+              <Cookie className="w-3 h-3" />
+              Cookie Preferences
+            </button>
+            <p className="hidden sm:block">Designed &amp; engineered with passion by FCI Tech Pioneers</p>
+          </div>
         </div>
       </div>
     </footer>

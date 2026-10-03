@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Code2, ArrowRight, Lock, Mail, User, GraduationCap } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { useAuthStore } from '@/store/authStore';
 import { Department, DEPARTMENT_LABELS } from '@/types';
 import toast from 'react-hot-toast';
@@ -70,33 +71,17 @@ export const RegisterPage: React.FC = () => {
         return;
       } else {
         const errData = await response.json().catch(() => null);
-        if (errData?.error?.message) {
-          setError(errData.error.message);
-          setIsLoading(false);
-          return;
-        }
+        const errMsg = errData?.error?.message || errData?.message || 'Registration failed. Please check your information.';
+        setError(errMsg);
+        toast.error(errMsg);
+        setIsLoading(false);
+        return;
       }
     } catch {
-      // Offline fallback
+      setError('Unable to connect to authentication server. Please check your connection.');
+      setIsLoading(false);
+      return;
     }
-
-    // Fallback demo user
-    setUser({
-      id: `usr-${Date.now()}`,
-      email: email.trim().toLowerCase(),
-      profile: {
-        id: `p-${Date.now()}`,
-        username: email.split('@')[0],
-        fullName,
-        department,
-        level,
-        communityPoints: 100,
-      },
-      roles: ['STUDENT'],
-    });
-    setIsLoading(false);
-    toast.success('Welcome to CUSTECH FCI Connect!');
-    navigate('/dashboard');
   };
 
   return (
@@ -123,13 +108,30 @@ export const RegisterPage: React.FC = () => {
           </p>
         </div>
 
-        <Card className="p-6 sm:p-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-xs">
-                {error}
+        <Card className="p-6 sm:p-8 space-y-5">
+          {error && (
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
+              {error}
+            </div>
+          )}
+
+          {/* ── Google Authentication ── */}
+          <div className="space-y-4">
+            <GoogleSignInButton text="Sign up with Google" />
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
               </div>
-            )}
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-surface px-2.5 text-text-muted text-[11px] font-medium tracking-wider">
+                  or register with email
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text">

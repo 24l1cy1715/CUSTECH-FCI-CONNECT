@@ -33,6 +33,7 @@ const EventsPage = React.lazy(() => import('@/pages/EventsPage').then(m => ({ de
 const LeaderboardPage = React.lazy(() => import('@/pages/LeaderboardPage').then(m => ({ default: m.LeaderboardPage })));
 const LoginPage = React.lazy(() => import('@/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 const RegisterPage = React.lazy(() => import('@/pages/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const AuthCallbackPage = React.lazy(() => import('@/pages/AuthCallbackPage').then(m => ({ default: m.AuthCallbackPage })));
 const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
 const DashboardPage = React.lazy(() => import('@/pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const AdminPortalPage = React.lazy(() => import('@/pages/AdminPortalPage').then(m => ({ default: m.AdminPortalPage })));
@@ -72,6 +73,11 @@ const MyFciDashboardPage = React.lazy(() => import('@/pages/MyFciDashboardPage')
 const AnnouncementsPage = React.lazy(() => import('@/pages/AnnouncementsPage').then(m => ({ default: m.AnnouncementsPage })));
 const LockdownPage = React.lazy(() => import('@/pages/LockdownPage').then(m => ({ default: m.LockdownPage })));
 
+// Privacy & Legal Policy Pages (public, lazy-loaded)
+const PrivacyPolicyPage = React.lazy(() => import('@/pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const CookiePolicyPage = React.lazy(() => import('@/pages/CookiePolicyPage').then(m => ({ default: m.CookiePolicyPage })));
+const TermsOfServicePage = React.lazy(() => import('@/pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
+
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuthStore } from '@/store/authStore';
 import { useSystemStore } from '@/store/systemStore';
@@ -100,6 +106,14 @@ const AnalyticsLayer: React.FC = () => {
   usePageViewTracker();
   return null;
 };
+
+// Cookie Consent UI (lazy-loaded, non-blocking)
+const CookieConsentBannerLazy = React.lazy(() =>
+  import('@/components/common/CookieConsentBanner').then(m => ({ default: m.CookieConsentBanner }))
+);
+const CookiePreferencesModalLazy = React.lazy(() =>
+  import('@/components/common/CookiePreferencesModal').then(m => ({ default: m.CookiePreferencesModal }))
+);
 
 export const App: React.FC = () => {
 
@@ -176,6 +190,10 @@ export const App: React.FC = () => {
         </a>
         <AnalyticsLayer />
         <TawkToChat />
+        <React.Suspense fallback={null}>
+          <CookieConsentBannerLazy />
+          <CookiePreferencesModalLazy />
+        </React.Suspense>
         <React.Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
             {/* Main Layout routes */}
@@ -215,6 +233,9 @@ export const App: React.FC = () => {
               <Route path="/achievements" element={<AchievementsPage />} />
               <Route path="/profile/:username/achievements" element={<AchievementsPage />} />
               <Route path="/lockdown" element={<LockdownPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
 
               {/* ── Authenticated Student & User Routes ── */}
               <Route element={<ProtectedRoute />}>
@@ -240,13 +261,14 @@ export const App: React.FC = () => {
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
 
-              {/* ── Elevated Administrator Routes (SUPER_ADMIN / ADMIN) ── */}
-              <Route element={<ProtectedRoute requiredRoles={['ADMIN', 'SUPER_ADMIN']} />}>
+              {/* ── Elevated Super Administrator Routes (Strictly SUPER_ADMIN) ── */}
+              <Route element={<ProtectedRoute requiredRoles={['SUPER_ADMIN']} />}>
                 <Route path="/admin" element={<AdminPortalPage />} />
                 <Route path="/admin/:tab" element={<AdminPortalPage />} />
                 <Route path="/super-admin" element={<AdminPortalPage />} />
                 <Route path="/super-admin/:tab" element={<AdminPortalPage />} />
               </Route>
+
 
               <Route path="*" element={<NotFoundPage />} />
             </Route>
@@ -254,6 +276,7 @@ export const App: React.FC = () => {
             {/* Standalone Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/verify-otp" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ForgotPasswordPage />} />

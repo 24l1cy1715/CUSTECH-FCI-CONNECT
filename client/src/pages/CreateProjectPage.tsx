@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, Code2, Plus, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { ProjectCategory } from '@/types';
+import { projectsApi } from '@/api/projectsApi';
 
 export const CreateProjectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,13 +30,32 @@ export const CreateProjectPage: React.FC = () => {
     setTechnologies(technologies.filter((t) => t !== tech));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    if (!title.trim() || !description.trim()) {
+      toast.error('Please enter a project title and description');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await projectsApi.createProject({
+        title: title.trim(),
+        description: description.trim(),
+        category,
+        githubUrl: githubUrl.trim() || undefined,
+        demoUrl: demoUrl.trim() || undefined,
+        technologies,
+      });
+
+      toast.success(res.message || 'Project showcase published successfully!');
       navigate('/projects');
-    }, 1000);
+    } catch (err: any) {
+      const msg = err.response?.data?.errors?.[0]?.message || err.response?.data?.message || 'Failed to publish project';
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

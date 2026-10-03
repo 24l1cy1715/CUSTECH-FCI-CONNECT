@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Code2, ArrowRight, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
 
@@ -19,17 +20,26 @@ export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Surface errors from OAuth redirect if present
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const err = searchParams.get('error');
+    if (err) {
+      setError(decodeURIComponent(err));
+      toast.error(decodeURIComponent(err));
+    }
+  }, [location.search]);
+
   const performLogin = async (loginEmail: string, loginPassword?: string) => {
     setIsLoading(true);
     setError('');
 
     const normalizedEmail = loginEmail.trim().toLowerCase();
-    const isAdmin = normalizedEmail === 'admin@custech.edu.ng' || normalizedEmail.includes('admin');
     const fromPath = (location.state as any)?.from?.pathname;
 
     try {
-      // 1. Attempt backend authentication to establish secure HttpOnly JWT cookies
-      const pwd = loginPassword || (isAdmin ? 'Admin@FCI2024!' : 'Student@2024');
+      // Authenticate with server to establish secure HttpOnly JWT session
+      const pwd = loginPassword || '';
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,71 +47,44 @@ export const LoginPage: React.FC = () => {
         body: JSON.stringify({ email: normalizedEmail, password: pwd }),
       });
 
-      if (response.ok) {
-        const payload = await response.json();
-        const loggedUser = payload.data?.user;
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok && payload?.success && payload?.data?.user) {
+        const loggedUser = payload.data.user;
+        const serverRoles: string[] = loggedUser.roles || ['STUDENT'];
+        const isSuperAdmin = serverRoles.includes('SUPER_ADMIN');
+
         setUser({
           id: loggedUser.id,
           email: loggedUser.email,
           profile: loggedUser.profile,
-          roles: loggedUser.roles || (isAdmin ? ['SUPER_ADMIN', 'ADMIN'] : ['STUDENT']),
+          roles: serverRoles,
         });
+
         queryClient.clear();
         toast.success(`Welcome back, ${loggedUser.profile?.fullName || loggedUser.email}!`);
-        const target = fromPath || (isAdmin ? '/admin' : '/dashboard');
+
+        // If the user is not a Super Admin, never route them into admin areas
+        const target = isSuperAdmin
+          ? (fromPath && fromPath.startsWith('/admin') ? fromPath : '/admin')
+          : '/dashboard';
+
         navigate(target, { replace: true });
         return;
       } else {
-        const errPayload = await response.json().catch(() => null);
-        if (response.status === 401 || response.status === 400 || response.status === 429) {
-          setError(errPayload?.error?.message || 'Invalid email or password');
-          setIsLoading(false);
-          return;
-        }
+        const errorMessage =
+          payload?.error?.message || payload?.message || 'Invalid email or password';
+        setError(errorMessage);
+        setIsLoading(false);
+        return;
       }
     } catch {
-      // Network or dev fallback
+      setError('Unable to connect to authentication service. Please check your connection.');
+      setIsLoading(false);
+      return;
     }
-
-    // Fallback if backend user doesn't exist or offline credentials
-    if (isAdmin) {
-      setUser({
-        id: 'usr-admin-seed',
-        email: normalizedEmail,
-        profile: {
-          id: 'p-admin',
-          username: 'fci_admin',
-          fullName: 'Prof. S. O. Jimoh',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-          department: 'CYBER_SECURITY',
-          level: 'Staff / Administrator',
-          communityPoints: 5000,
-        },
-        roles: ['SUPER_ADMIN', 'ADMIN'],
-      });
-      toast.success('Authenticated as Faculty Super Admin');
-    } else {
-      setUser({
-        id: 'usr-demo',
-        email: normalizedEmail,
-        profile: {
-          id: 'p-demo',
-          username: normalizedEmail.split('@')[0],
-          fullName: 'Aisha Bello',
-          avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-          department: 'CYBER_SECURITY',
-          level: '300',
-          communityPoints: 1820,
-        },
-        roles: ['STUDENT'],
-      });
-      toast.success('Authenticated as Aisha Bello');
-    }
-
-    setIsLoading(false);
-    const target = fromPath || (isAdmin ? '/admin' : '/dashboard');
-    navigate(target, { replace: true });
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,14 +93,6 @@ export const LoginPage: React.FC = () => {
       return;
     }
     await performLogin(email, password);
-  };
-
-  const handleQuickAdminLogin = async () => {
-    await performLogin('admin@custech.edu.ng', 'Admin@FCI2024!');
-  };
-
-  const handleQuickStudentLogin = async () => {
-    await performLogin('aisha.bello@custech.edu.ng', 'Student@2024');
   };
 
   return (
@@ -144,13 +119,30 @@ export const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        <Card className="p-6 sm:p-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-xs">
-                {error}
+        <Card className="p-6 sm:p-8 space-y-5">
+          {error && (
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
+              {error}
+            </div>
+          )}
+
+          {/* ── Google Authentication ── */}
+          <div className="space-y-4">
+            <GoogleSignInButton text="Continue with Google" />
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
               </div>
-            )}
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-surface px-2.5 text-text-muted text-[11px] font-medium tracking-wider">
+                  or sign in with email
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text">
@@ -219,45 +211,6 @@ export const LoginPage: React.FC = () => {
             </Link>
           </div>
         </Card>
-
-        {/* Demo Credentials Box */}
-        <div className="p-4 rounded-2xl bg-surface border border-border/80 shadow-sm space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Demo Login Credentials
-            </span>
-            <span className="text-[11px] text-accent font-semibold">Click to sign in instantly</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              onClick={handleQuickAdminLogin}
-              className="text-left p-2.5 rounded-xl border border-accent/40 bg-accent/5 hover:border-accent hover:bg-accent/10 transition-all group"
-            >
-              <div className="font-semibold text-primary dark:text-white flex items-center justify-between">
-                <span>Super Admin</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-mono font-bold">1-CLICK LOGIN</span>
-              </div>
-              <p className="text-[11px] text-text-muted font-mono truncate mt-0.5">admin@custech.edu.ng</p>
-              <p className="text-[10px] text-accent font-semibold">Takes you directly to /admin</p>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleQuickStudentLogin}
-              className="text-left p-2.5 rounded-xl border border-border bg-bg hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group"
-            >
-              <div className="font-semibold text-primary dark:text-white flex items-center justify-between">
-                <span>Student</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono">STUDENT</span>
-              </div>
-              <p className="text-[11px] text-text-muted font-mono truncate mt-0.5">aisha.bello@custech.edu.ng</p>
-              <p className="text-[10px] text-text-muted font-mono">Takes you to /dashboard</p>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

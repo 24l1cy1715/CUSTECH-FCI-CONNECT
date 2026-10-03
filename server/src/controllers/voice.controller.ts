@@ -23,12 +23,12 @@ export const voiceController = {
           data: {
             question: 'Which emerging technical track would you like FCI to expand next semester?',
             description: 'Help the faculty prioritize upcoming workshop certifications, lab equipment, and faculty resources.',
-            options: [
+            options: JSON.stringify([
               { id: '1', text: 'Cloud Architecture & DevOps (AWS / Docker / Kubernetes)' },
               { id: '2', text: 'Offensive Cybersecurity & Ethical Hacking Labs' },
               { id: '3', text: 'Applied Generative AI & Large Language Models' },
               { id: '4', text: 'Mobile Systems & Cross-Platform (Flutter / React Native)' },
-            ],
+            ]),
             status: VoicePollStatus.ACTIVE,
             createdById: userId,
             totalVotes: 0,
@@ -55,6 +55,20 @@ export const voiceController = {
       // Calculate vote counts per option
       const pollStats = await Promise.all(
         polls.map(async (poll) => {
+          let parsedOptions: any[] = [];
+          try {
+            parsedOptions = typeof poll.options === 'string' ? JSON.parse(poll.options) : (poll.options as any);
+          } catch {
+            parsedOptions = [];
+          }
+
+          const normalizedOptions = Array.isArray(parsedOptions)
+            ? parsedOptions.map((opt, idx) => {
+                if (typeof opt === 'string') return { id: `${idx + 1}`, text: opt };
+                return { id: opt.id || `${idx + 1}`, text: opt.text || String(opt) };
+              })
+            : [];
+
           const allVotes = await prisma.voicePollVote.findMany({
             where: { pollId: poll.id },
             select: { optionIndex: true },
@@ -65,10 +79,15 @@ export const voiceController = {
             counts[v.optionIndex] = (counts[v.optionIndex] || 0) + 1;
           });
 
-          const userVotedOption = poll.votes?.[0]?.optionIndex ?? null;
+          const userVotedOption = (poll as any).votes?.[0]?.optionIndex ?? null;
 
           return {
             ...poll,
+            title: poll.question,
+            question: poll.question,
+            options: normalizedOptions,
+            hasVoted: userVotedOption !== null,
+            userVoteIndex: userVotedOption,
             userVotedOption,
             voteBreakdown: counts,
             totalVotes: allVotes.length,
@@ -93,6 +112,18 @@ export const voiceController = {
       const poll = await prisma.voicePoll.findUnique({ where: { id: pollId } });
       if (!poll) throw ApiError.notFound('Poll not found');
       if (poll.status !== VoicePollStatus.ACTIVE) throw ApiError.badRequest('This poll is closed');
+
+      let parsedOptions: any[] = [];
+      try {
+        parsedOptions = typeof poll.options === 'string' ? JSON.parse(poll.options) : (poll.options as any);
+      } catch {
+        parsedOptions = [];
+      }
+      if (Array.isArray(parsedOptions) && parsedOptions.length > 0) {
+        if (optionIndex < 0 || optionIndex >= parsedOptions.length) {
+          throw ApiError.badRequest('Invalid option index selected');
+        }
+      }
 
       // Check if user already voted
       const existingVote = await prisma.voicePollVote.findUnique({
@@ -122,18 +153,19 @@ export const voiceController = {
       const userId = req.user?.userId;
       if (!userId) throw ApiError.unauthorized('Authentication required');
 
-      const { question, description, options, startDate, endDate, isAnonymous } = req.body;
+      const { question: rawQuestion, title: rawTitle, description, options, startDate, endDate, isAnonymous } = req.body;
+      const question = rawQuestion || rawTitle;
 
-      const formattedOptions = options.map((opt: string, idx: number) => ({
+      const formattedOptions = (options || []).map((opt: string | { id?: string; text?: string }, idx: number) => ({
         id: `${idx + 1}`,
-        text: opt,
+        text: typeof opt === 'string' ? opt : opt.text || String(opt),
       }));
 
       const poll = await prisma.voicePoll.create({
         data: {
           question,
           description: description || null,
-          options: formattedOptions,
+          options: JSON.stringify(formattedOptions),
           startDate: startDate ? new Date(startDate) : null,
           endDate: endDate ? new Date(endDate) : null,
           isAnonymous: isAnonymous || false,

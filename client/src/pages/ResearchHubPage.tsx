@@ -80,7 +80,8 @@ export const ResearchHubPage: React.FC = () => {
       });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Failed to create project');
+      const msg = err.response?.data?.errors?.[0]?.message || err.response?.data?.message || 'Failed to create project';
+      toast.error(msg);
     },
   });
 
@@ -94,7 +95,8 @@ export const ResearchHubPage: React.FC = () => {
       setNewIdea({ title: '', description: '', category: 'Artificial Intelligence' });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Failed to post idea');
+      const msg = err.response?.data?.errors?.[0]?.message || err.response?.data?.message || 'Failed to post idea';
+      toast.error(msg);
     },
   });
 

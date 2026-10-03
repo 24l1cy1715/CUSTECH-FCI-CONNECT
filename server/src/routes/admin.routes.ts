@@ -2,13 +2,15 @@ import { Router } from 'express';
 import { AdminController } from '../controllers/admin.controller';
 import { digitalIdController } from '../controllers/digitalId.controller';
 import { authenticate } from '../middleware/authenticate';
-import { requireAnyRole, requireRole } from '../middleware/authorize';
+import { requireRole, requireSuperAdmin } from '../middleware/authorize';
+
 
 export const adminRouter = Router();
 
-// Protect all admin endpoints with JWT authentication and Super Admin / Admin role check
+// Protect all admin & super-admin endpoints strictly with database-backed Super Admin authorization
 adminRouter.use(authenticate);
-adminRouter.use(requireAnyRole(['ADMIN', 'SUPER_ADMIN']));
+adminRouter.use(requireSuperAdmin);
+
 
 // ── Overview & Metrics ──
 adminRouter.get('/stats', AdminController.getStats);

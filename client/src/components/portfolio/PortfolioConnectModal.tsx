@@ -45,7 +45,7 @@ export const PortfolioConnectModal: React.FC<PortfolioConnectModalProps> = ({
   const onSubmit = async (data: ConnectFormData) => {
     try {
       setIsSubmitting(true);
-      const res = await sendPortfolioConnectRequest(username, data);
+      const res = await sendPortfolioConnectRequest(username, data as any);
       toast.success(res.message || 'Message forwarded successfully!');
       reset();
       onClose();

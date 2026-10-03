@@ -74,12 +74,34 @@ const resetPasswordLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate limiter strictly for Super Admin login (max 5 attempts per 15 minutes)
+const adminAuthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 5,
+  message: {
+    success: false,
+    error: {
+      code: 'TOO_MANY_REQUESTS',
+      message: 'Too many administrative login attempts. Please try again after 15 minutes.',
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Authentication routes
 authRouter.post('/register', authLimiter, validate(registerSchema), AuthController.register);
 authRouter.post('/login', authLimiter, validate(loginSchema), AuthController.login);
+authRouter.post('/admin/login', adminAuthLimiter, validate(loginSchema), AuthController.adminLogin);
 authRouter.post('/refresh-token', AuthController.refreshToken);
 authRouter.post('/logout', AuthController.logout);
 authRouter.get('/me', authenticate, AuthController.me);
+
+// Google OAuth 2.0 routes
+authRouter.get('/google', AuthController.initiateGoogleAuth);
+authRouter.get('/google/callback', AuthController.handleGoogleCallback);
+authRouter.post('/google/verify', AuthController.verifyGoogleToken);
+
 
 // Password Reset & OTP routes
 authRouter.post(

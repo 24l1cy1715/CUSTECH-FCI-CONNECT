@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Sun, Globe, Shield, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { Sun, Globe, Shield, MessageSquare, CheckCircle2, Cookie, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { useUIStore } from '@/store/uiStore';
+import { useConsentStore } from '@/store/consentStore';
 import { useTranslation } from 'react-i18next';
 
 export const SettingsPage: React.FC = () => {
   const { theme, setTheme, setLanguage } = useUIStore();
   const { t, i18n } = useTranslation();
+  const { openPreferencesModal, consentRecord, hasInteracted } = useConsentStore();
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -113,6 +116,61 @@ export const SettingsPage: React.FC = () => {
               <input type="checkbox" defaultChecked className="rounded accent-accent w-4 h-4" />
               <span>Campus roommate availability alerts</span>
             </label>
+          </div>
+        </Card>
+
+        {/* Privacy & Cookie Preferences */}
+        <Card className="p-6 space-y-4">
+          <h2 className="font-display font-bold text-lg text-text flex items-center gap-2">
+            <Cookie className="w-5 h-5 text-accent" />
+            Privacy &amp; Cookie Preferences
+          </h2>
+          <p className="text-xs text-text-secondary">
+            Manage how FCI Connect handles cookies and browser storage. Essential cookies for authentication and security are always required.
+          </p>
+
+          {hasInteracted && consentRecord && (
+            <div className="p-3 rounded-xl bg-surface-raised/40 border border-border text-xs space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Essential Cookies</span>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">Always Active</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Analytics</span>
+                <span className={`px-2 py-0.5 rounded font-semibold text-[11px] ${consentRecord.analytics ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'}`}>
+                  {consentRecord.analytics ? 'Accepted' : 'Disabled'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Marketing</span>
+                <span className={`px-2 py-0.5 rounded font-semibold text-[11px] ${consentRecord.marketing ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'}`}>
+                  {consentRecord.marketing ? 'Accepted' : 'Disabled'}
+                </span>
+              </div>
+              <p className="text-[11px] text-text-muted pt-1">
+                Last updated: {new Date(consentRecord.timestamp).toLocaleString()}
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openPreferencesModal}
+              leftIcon={<Cookie className="w-3.5 h-3.5 text-accent" />}
+              className="text-xs"
+            >
+              {hasInteracted ? 'Change Cookie Preferences' : 'Set Cookie Preferences'}
+            </Button>
+            <div className="flex items-center gap-3 text-xs text-text-muted">
+              <Link to="/privacy" className="hover:text-accent underline flex items-center gap-1">
+                Privacy Policy <ExternalLink className="w-3 h-3" />
+              </Link>
+              <Link to="/cookie-policy" className="hover:text-accent underline flex items-center gap-1">
+                Cookie Policy <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
         </Card>
 

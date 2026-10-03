@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { digitalIdController } from '../controllers/digitalId.controller';
 import { authenticate } from '../middleware/authenticate';
-import { requireAnyRole } from '../middleware/authorize';
+import { requireAnyRole, requireSuperAdmin } from '../middleware/authorize';
 import { validate } from '../middleware/validate';
+
 import {
   updateDigitalIdVisibilitySchema,
   adminSuspendDigitalIdSchema,
@@ -22,45 +23,46 @@ digitalIdRouter.patch(
 );
 digitalIdRouter.post('/regenerate', authenticate, digitalIdController.regenerateToken);
 
-// ── Admin Management endpoints ────────────────────────────────────────────────
+// ── Super Admin Management endpoints ─────────────────────────────────────────
 digitalIdRouter.get(
   '/admin',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   digitalIdController.adminListIdentities
 );
 digitalIdRouter.post(
   '/admin/:userId/verify',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   digitalIdController.adminVerify
 );
 digitalIdRouter.post(
   '/admin/:userId/suspend',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   validate(adminSuspendDigitalIdSchema),
   digitalIdController.adminSuspend
 );
 digitalIdRouter.post(
   '/admin/:userId/revoke',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   validate(adminRevokeDigitalIdSchema),
   digitalIdController.adminRevoke
 );
 digitalIdRouter.post(
   '/admin/:userId/regenerate',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   digitalIdController.adminRegenerate
 );
 digitalIdRouter.get(
   '/admin/logs',
   authenticate,
-  requireAnyRole(['ADMIN', 'SUPER_ADMIN']),
+  requireSuperAdmin,
   digitalIdController.adminGetLogs
 );
+
 
 import { digitalIdVerifyLimiter } from '../middleware/rateLimiter';
 
